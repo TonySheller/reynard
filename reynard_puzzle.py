@@ -3,7 +3,7 @@ Reynard is an agent that uses reasoning to solve cryptograms.
 
 Anthony Sheller
 Reasoning Under Uncertainty
-EN.605.7
+EN.605.745
 
 '''
 
@@ -32,6 +32,7 @@ class Puzzle:
             self.letterFrequency()
             self.wordLengthsFrequency()
             self.generateBlankPuzzle()
+            
         
         
     def readInPuzzle(self,puzzleFile):
@@ -40,6 +41,17 @@ class Puzzle:
         '''
         with open(puzzleFile,'r') as f:
             self.pz_as_string = f.read()
+            self.pz_array = []
+            # Need to take out the name in the cryptogram as its impacting frequency counts
+            temp = ''
+            for ch in self.pz_as_string:
+                if ch == '(':
+                    break
+                else:
+                    temp += ch
+            self.pz_as_string = temp
+            for char in self.pz_as_string:
+                self.pz_array.append(char)
 
     def wordsWithPunctuation(self):
         '''
@@ -102,12 +114,15 @@ class Puzzle:
         Create a Blank Puzzle with the correct spacing as in the original.
         This is where characters will be filled in
         '''
-        self.blank_puzzle = ''
+        self.pz_blank_puzzle = ''
+        self.pz_blank_puzzle_array = []
         for char in self.pz_as_string:
             if char in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
-                self.blank_puzzle += '_'
+                self.pz_blank_puzzle += '_'
+                self.pz_blank_puzzle_array.append('_')
             else:
-                self.blank_puzzle += char
+                self.pz_blank_puzzle += char
+                self.pz_blank_puzzle_array.append(char)
 
     def checkForDoubleLetters(self):
         '''
@@ -136,8 +151,12 @@ class Puzzle:
         Method to show the puzzle on the screen
         May consider using curses to display on the console
         '''
+        # Convert pz_blank_puzzle_array to blank puzzle
+        self.pz_blank_puzzle = ''
+        for char in self.pz_blank_puzzle_array:
+            self.pz_blank_puzzle += char
         pz_string_as_lines = self.pz_as_string.split('\n')
-        blank_pz_as_lines = self.blank_puzzle.split('\n')
+        blank_pz_as_lines = self.pz_blank_puzzle.split('\n')
         for i in range(len(pz_string_as_lines)):
             print(blank_pz_as_lines[i])
             print(pz_string_as_lines[i])

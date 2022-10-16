@@ -1,4 +1,6 @@
 # Add Python modules that may be necesary for this project to function. 
 # At the end of the project, we can do a conda list -e > requirements.txt
 # Then when needing to create it again, simply do conda create --name <env> --file requirements.txt
+jupyter-lab
 nltk
+pyagrum

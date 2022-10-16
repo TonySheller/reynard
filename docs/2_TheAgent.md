@@ -16,7 +16,8 @@ We can start our Bayes Net with these assignments.
 The second layer of this Bayes Network will assume two letter words are present, and they are in the trial case.  But if they weren't then we would probably not do three as there are over 1500. But we can narrow that down given a letter or two. 
 
 This one to two letter word attack pattern may end with just that: Given A or I how many two letter words are possible. 
-
+This small effort feeds into a more complex idea where the agent reasons about word possibilities based on some of the statistics
+provided in the reynard_constants.
 
 
 ## References:

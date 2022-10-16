@@ -69,28 +69,28 @@ class TestOne(unittest.TestCase):
         Test reading in the puzzle string.
         This test is specific to pz1.txt
         '''
-        self.assertEqual(217, len(self.reynard.pz_as_string))
+        self.assertEqual(199, len(self.reynard.pz_as_string))
         
     def testReynardCordCountWithPunctuation(self):
         '''
         Test the word count not splitting out the punctuation
         '''  
         self.reynard.wordsWithPunctuation()
-        self.assertEqual(46, len(self.reynard.pz_words_as_array_with_punctuation))
+        self.assertEqual(42, len(self.reynard.pz_words_as_array_with_punctuation))
 
     def testReynardWordCountWithoutPunctuation(self):
         '''
         Test the word count not splitting out the punctuation
         '''  
         self.reynard.wordsWithoutPunction()
-        self.assertEqual(41, len(self.reynard.pz_words_as_array_without_punctuation))
+        self.assertEqual(39, len(self.reynard.pz_words_as_array_without_punctuation))
     
     def testReynardLetterCount(self):
         '''
         Need to get a frequency count of the letters
         '''
         self.reynard.letterFrequency()
-        self.assertEqual(24, len(self.reynard.pz_letter_freqeuncy.keys()))
+        self.assertEqual(23, len(self.reynard.pz_letter_freqeuncy.keys()))
 
         
     def testWordLengthFrequency(self):
@@ -98,7 +98,7 @@ class TestOne(unittest.TestCase):
         Confirm word_lengths_frequency works
         '''
         self.reynard.wordLengthsFrequency()
-        self.assertEqual(9, len(self.reynard.word_lengths_freqeuncy))
+        self.assertEqual(8, len(self.reynard.word_lengths_freqeuncy))
         
         
     def testBlankPuzzle(self):
@@ -109,7 +109,7 @@ class TestOne(unittest.TestCase):
         #print(self.reynard.pz_as_string)
         #print("\n\n")
         #print(self.reynard.blank_puzzle)
-        self.assertEqual(len(self.reynard.pz_as_string), len(self.reynard.blank_puzzle))
+        self.assertEqual(len(self.reynard.pz_as_string), len(self.reynard.pz_blank_puzzle))
         
     def testDoubleLetterWords(self):
         '''
@@ -117,7 +117,7 @@ class TestOne(unittest.TestCase):
         
         '''
         self.reynard.checkForDoubleLetters()
-        self.assertEqual(3, self.reynard.double_letter_words)
+        self.assertEqual(2, self.reynard.double_letter_words)
         
         
 if __name__ == '__main__':

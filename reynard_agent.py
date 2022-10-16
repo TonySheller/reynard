@@ -8,6 +8,7 @@ compactness and separation of concerns (agent from data)
 import pyAgrum as gum
 from reynard_constants import letter_frequency, two_letter_word_frequency
 from reynard_puzzle import Puzzle
+from reynard_reasoner import Reasoner
 
 class Agent:
     '''
@@ -25,6 +26,7 @@ class Agent:
         self.stackOfDecisions = [] # Lists make great stacks because they have a push and pop method
         self.lettersUsed =[] 
         self.puzzle = Puzzle('data/pz1.txt')
+        self.reasoner = Reasoner()
     
     def reason(self):
         '''
@@ -42,56 +44,63 @@ class Agent:
             pass
         else:
             triedStrategies['oneTwo']
+            
         # This will continue to loop reason over the puzzle. 
-        while goal < 1:
+        while self.goal < 1:
+            
 
             # If we have one and two letter words then we should try this initial stratedgy
             if 'OneTwo' not in triedStrategies:
-                self.bayesNetOneTwo()
-            
-            
-    def bayesNetOneTwo(self):
+                self.oneTwoStratedgy()
+    
+            break
+        
+        
+    def makeMove(self,move, toReplace):
         '''
-        This is pretty rudimentary to start but assume that there are one letter words and two letter words.
-        Given A or I as the most likely one letter words.  What can we say about the two letter words and the follow on to that.  
-        This is my first Bayes net
+        # Find the letter *toReplace* and replace it with *move*
         
+        '''    
+        pass
+    
+         
+    def oneTwoStratedgy(self):
         '''
-        # First, are there any one letter words?
-        # Check the lettpass
+        Givent that we have 
+        '''
+        # our starting guess
+        guess = 'A'
+        one_letter_word_locals = self.nLetterWords(n=1)
+        # What do we do when there are more than one letter words. :-(
+        replaceThis = ''
+        for key in one_letter_word_locals.keys():
+            replaceThis = key
+            self.stackOfDecisions.append({'guess':guess,'value':key})
+            for idx in one_letter_word_locals[key]:
+                self.puzzle.pz_blank_puzzle_array[idx] = guess
+            break #breakout afer only one key
+        # Are there two letter words that start with A
+        two_letter_word_starts_with_A = False
+        for word in self.nLetterWords(n=2):
+            if word[0] == replaceThis:
+                two_letter_word_starts_with_A = True
+                break
+        ## If we start a letter with our Guess then we can use a small BN to forecast 
+        ## second letter to use        
+        if two_letter_word_starts_with_A:
+            # Create the one Two Bayes Net and then 
+            self.reasoner.bayesNetOneTwo()
+            self.reasoner.oneTwoIE.setEvidence({"OneLetterWords":[1.0,0.0]})
+            self.reasoner.oneTwoIE.makeInference()
+            self.reasoner.oneTwoIE.posterior("TwoLetterWords")
+            suggestion = two_letter_word_frequency[self.reasoner.oneTwoIE.posterior("TwoLetterWords")[:].argmax()]
+            # This did not get evaluated on the first go so will need to work on it another way. 
+        self.puzzle.showPuzzle()
+        # Now ask ourself == are there any two letter words that begin with an a?
+        #We do this because its 
         
-        # The bayes network variable will be called fl and have two options
-        # Create Wrapper around the Bayesian Network
-        self.bn=gum.BayesNet('cryptogram Solver')
-        # Create the startNode, this method takes the name, description and the possible values it can be
-        self.bn.add(gum.LabelizedVariable('OneLetterWords','Are there any one letter words?',['A','I']))
-        # Assign Initial Probabilities
-        self.bn.cpt('OneLetterWords').fillWith([0.5297,0.4703]);
-        # Add next Layer
-        # 1. Create LabeleliedVariable
-        self.bn.add(gum.LabelizedVariable('TwoLetterWords','Are there any two letter words?', two_letter_word_frequency))
-        # 2. initialize two arrays to all zeros as only two letter words that begin with A or I matter
-        temp_probsA = [0 for i in range(len(two_letter_word_frequency)) ]
-        temp_probsI = [0 for i in range(len(two_letter_word_frequency))]
-        # 3. Iterate through list of words and assign the ones that begin with A or I a probability based on
-        #    the second letter value. 
-        for i in range(len(two_letter_word_frequency)):
-            if two_letter_word_frequency[i].startswith('A'):
-                temp_probsA[i] = letter_frequency[two_letter_word_frequency[i][1]]
-            elif two_letter_word_frequency[i].startswith('I'):
-                temp_probsI[i] = letter_frequency[two_letter_word_frequency[i][1]]
-        # 4. Calculate Lists of Probabilities
-        probsA = [x/sum(temp_probsA) for x in temp_probsA]
-        probsI = [y/sum(temp_probsI) for y in temp_probsI]
-        # 5. Add Arc from OneLetterWords to Two LetterWords
-        self.bn.addArc('OneLetterWords','TwoLetterWords')
-        # 6. Assign probabilities to TwoLetterWords
-        self.bn.cpt('TwoLetterWords')[:]= [probsA,probsI]
-        # 7. Create the inferrence engine 
-        self.oneTwoIE = gum.LazyPropagation(self.bn)
         
-
-
+        
  
     def goalMeasure(self):
         '''
@@ -104,13 +113,26 @@ class Agent:
     def nLetterWords(self,n=1):
         '''
         Check for n letter words
-        return all indexes of one letter words.
+        return all indexes of n-letter words.
+        If it's a one letter word it will return the index of all letters that are the one letter word
         '''
+        import re
         # return the letter that's there and the index. This could be more than one. so need to be careful
-        returnMe = [wd for wd in agent.puzzle.pz_words_as_array_without_punctuation if len(wd) ==n]
-        
-        
+        returnMe  = {}
+        n_letter_words = [wd for wd in self.puzzle.pz_words_as_array_without_punctuation if len(wd) ==n]
+        print(n_letter_words)
+        deduped_list = [*set(n_letter_words)]
+        for item in deduped_list:
+            returnMe[item] =[]
+            for i in range(len(self.puzzle.pz_as_string)):
+                if item == self.puzzle.pz_as_string[i]:
+                    returnMe[item].append(i)
 
+        return returnMe                    
+
+    
+    def getLetterToReplace(self):
+        pass
     
 def main():
     agent = Agent()
