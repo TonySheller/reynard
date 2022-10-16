@@ -1,12 +1,16 @@
 '''
-For the lack of a creative name, just testOne
+For the lack of a creative name, just testSetOne
+
+These tests will use pz1.txt as the puzzle so the metrics are from it. 
+
 '''
 import sys
 sys.path.insert(0, '../../reynard')
 import unittest
 import math
-from reynard import Reynard
+from reynard_puzzle import Puzzle
 from reynard_constants import letter_frequency,letter_frequency_wiki, most_common_first_letter_in_words
+
 
 PZ1_WORD_COUNT= 41
 
@@ -22,13 +26,14 @@ class TestOne(unittest.TestCase):
         '''
         setup method for hte unit tests. 
         '''
-        pass
+        self.reynard = Puzzle()
+        self.reynard.readInPuzzle('/mnt/e/OneDrive - Johns Hopkins/EN.605.745/reynard/data/pz1.txt')
     
     def tearDown(self):
         '''
         tear down what was setup.
         '''
-        pass
+        del(self.reynard)
         
     def testLetterFreqIsOne(self):
         '''
@@ -52,52 +57,68 @@ class TestOne(unittest.TestCase):
             sum += lf[i]
         self.assertEqual(1, round(sum,4))
 
-    def test_first_letter_in_words_list(self):
+    def testFirstLetterInWordsList(self):
         '''
         Test that the string converts to a list
         '''
         mc1w = most_common_first_letter_in_words
         self.assertEqual(type(mc1w), list)
         
-    def test_reynard_read_in(self):
+    def testReynardReadIn(self):
         '''
         Test reading in the puzzle string.
         This test is specific to pz1.txt
         '''
-        reynard = Reynard()
-        reynard.readInPuzzle('../data/pz1.txt')
-        self.assertEqual(217, len(reynard.pz_as_string))
+        self.assertEqual(217, len(self.reynard.pz_as_string))
         
-    def test_reynard_word_count_with_punctuation(self):
+    def testReynardCordCountWithPunctuation(self):
         '''
         Test the word count not splitting out the punctuation
         '''  
-        reynard = Reynard()
-        reynard.readInPuzzle('../data/pz1.txt')
-        reynard.wordsWithPunctuation()
-        self.assertEqual(46, len(reynard.pz_words_as_array_with_punctuation))
+        self.reynard.wordsWithPunctuation()
+        self.assertEqual(46, len(self.reynard.pz_words_as_array_with_punctuation))
 
-    def test_reynard_word_count_without_punctuation(self):
+    def testReynardWordCountWithoutPunctuation(self):
         '''
         Test the word count not splitting out the punctuation
         '''  
-        reynard = Reynard()
-        reynard.readInPuzzle('../data/pz1.txt')
-        reynard.wordsWithoutPunction()
-        print(reynard.pz_words_as_array_without_punctuation)
-        self.assertEqual(41, len(reynard.pz_words_as_array_without_punctuation))
+        self.reynard.wordsWithoutPunction()
+        self.assertEqual(41, len(self.reynard.pz_words_as_array_without_punctuation))
     
-    def test_reynard_letter_count(self):
+    def testReynardLetterCount(self):
         '''
         Need to get a frequency count of the letters
         '''
-        reynard = Reynard()
-        reynard.readInPuzzle('../data/pz1.txt')
-        reynard.letterFrequency()
+        self.reynard.letterFrequency()
+        self.assertEqual(24, len(self.reynard.pz_letter_freqeuncy.keys()))
+
+        
+    def testWordLengthFrequency(self):
+        '''
+        Confirm word_lengths_frequency works
+        '''
+        self.reynard.wordLengthsFrequency()
+        self.assertEqual(9, len(self.reynard.word_lengths_freqeuncy))
         
         
-    def test_for_apostrophe_words(self):
-        pass
+    def testBlankPuzzle(self):
+        '''
+        Confirm blank puzzle matches original
+        '''
+        self.reynard.generateBlankPuzzle()
+        #print(self.reynard.pz_as_string)
+        #print("\n\n")
+        #print(self.reynard.blank_puzzle)
+        self.assertEqual(len(self.reynard.pz_as_string), len(self.reynard.blank_puzzle))
+        
+    def testDoubleLetterWords(self):
+        '''
+        Evaluate method for checking if there are double letter words
+        
+        '''
+        self.reynard.checkForDoubleLetters()
+        self.assertEqual(3, self.reynard.double_letter_words)
+        
         
 if __name__ == '__main__':
     unittest.main()
