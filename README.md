@@ -34,5 +34,5 @@ It's going to take a few solutions to get to the final solution
 
 
 
-References:
-Cryptograms Special, November 2022 Issue, Kappa Publishers, www.kappapuzzles.com
+
+Cryptogram Puzzles are used from Cryptograms Special, November 2022 Issue, Kappa Publishers, www.kappapuzzles.com
