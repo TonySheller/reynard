@@ -56,12 +56,6 @@ class Agent:
             break
         
         
-    def makeMove(self,move, toReplace):
-        '''
-        # Find the letter *toReplace* and replace it with *move*
-        
-        '''    
-        pass
     
          
     def oneTwoStratedgy(self):

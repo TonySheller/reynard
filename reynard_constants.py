@@ -43,31 +43,32 @@ letter_frequency['Q'] = .001962
 # This table from https://en.wikipedia.org/wiki/Letter_frequency
 letter_frequency_wiki = {}        
 letter_frequency_wiki['E'] = .12702
-letter_frequency_wiki['A'] = .08167
-letter_frequency_wiki['R'] = .05987
-letter_frequency_wiki['I'] = .06966
-letter_frequency_wiki['O'] = .07507
 letter_frequency_wiki['T'] = .09056
+letter_frequency_wiki['A'] = .08167
+letter_frequency_wiki['O'] = .07507
+letter_frequency_wiki['I'] = .06966
 letter_frequency_wiki['N'] = .06749
 letter_frequency_wiki['S'] = .06327
+letter_frequency_wiki['H'] = .06094
+letter_frequency_wiki['R'] = .05987
+letter_frequency_wiki['D'] = .04253
 letter_frequency_wiki['L'] = .04025
 letter_frequency_wiki['C'] = .02782 
 letter_frequency_wiki['U'] = .02758
-letter_frequency_wiki['D'] = .04253
-letter_frequency_wiki['P'] = .01929
 letter_frequency_wiki['M'] = .02406
-letter_frequency_wiki['H'] = .06094
-letter_frequency_wiki['G'] = .02015
-letter_frequency_wiki['B'] = .01492
-letter_frequency_wiki['F'] = .02228
-letter_frequency_wiki['Y'] = .01974
 letter_frequency_wiki['W'] = .02360
-letter_frequency_wiki['K'] = .00772
+letter_frequency_wiki['F'] = .02228
+letter_frequency_wiki['G'] = .02015
+letter_frequency_wiki['Y'] = .01974
+letter_frequency_wiki['P'] = .01929
+letter_frequency_wiki['B'] = .01492
 letter_frequency_wiki['V'] = .00978
-letter_frequency_wiki['X'] = .00150
-letter_frequency_wiki['Z'] = .00074
+letter_frequency_wiki['K'] = .00772
 letter_frequency_wiki['J'] = .00153
+letter_frequency_wiki['X'] = .00150
 letter_frequency_wiki['Q'] = .00095
+letter_frequency_wiki['Z'] = .00074
+
 
 # Letter Frequency tables
 # This is stored in an array with the order presereverd

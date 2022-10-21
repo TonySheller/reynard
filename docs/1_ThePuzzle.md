@@ -15,6 +15,7 @@ The following attributes of a puzzle are generated:
 8. BlankPuzzle
 9. DoubleLetterCheck -- nice to know -- can make assumptions about words
 10. WordCounts -- are there repeats.
+11. Pattern words -- for words in the puzzle.  Are there words that have letters that repeat, other than double letters. for example the word, 'that' has two 't' in it.  Other pattern words include PEOPLE, ELEVEN, LEGALLY, ILLEGALLY, SELLS, 
 
 A method that shows that puzzle is also provided.
 
