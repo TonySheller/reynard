@@ -12,6 +12,7 @@ from nltk.tokenize import RegexpTokenizer
 import reynard_constants
 import os
 import collections
+import operator
 
 
 
@@ -32,6 +33,16 @@ class Puzzle:
             self.letterFrequency()
             self.wordLengthsFrequency()
             self.generateBlankPuzzle()
+            self.generateEmptyKey()
+    
+    def generateEmptyKey(self):
+        '''
+        Generate an empty key 
+        '''
+        self.pz_key = {}
+        for key in self.pz_letter_frequency:
+            self.pz_key[key] = "_"
+            
             
         
         
@@ -64,7 +75,7 @@ class Puzzle:
         Method to get all words without punctuation
         Note May want to figure out how to leave apostrophes in.
         '''
-        tokenizer = RegexpTokenizer(r'\w+') ## Consider leaving apostrophes in
+        tokenizer = RegexpTokenizer("[\w']+") ## The \w' will leave in the apostrophe
         self.pz_words_as_array_without_punctuation = tokenizer.tokenize(self.pz_as_string)
         
     def letterFrequency(self):
@@ -72,30 +83,47 @@ class Puzzle:
         Method to get the frequency count of letters in the puzzle
         It sets the self.pz_letter_frequency attribute
         '''
-        self.pz_letter_freqeuncy = {}
+        self.pz_letter_frequency = {}
         # If it doesn't exist then create it
         if not hasattr(self, 'pz_words_as_array_without_punctuation'):
             self.wordsWithoutPunction()
         for word in self.pz_words_as_array_without_punctuation:
             for char in word:
-                if char not in self.pz_letter_freqeuncy and char in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
-                    self.pz_letter_freqeuncy[char] = 0
-                self.pz_letter_freqeuncy[char] += 1
+                if char not in self.pz_letter_frequency and char in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
+                    self.pz_letter_frequency[char] = 0
+                self.pz_letter_frequency[char] += 1
+        summed = sum(self.pz_letter_frequency.values())
+        for key in self.pz_letter_frequency:
+            self.pz_letter_frequency[key] = float("{:.4f}".format(self.pz_letter_frequency[key]/summed))
+        # Now rearrange them according to most frequent to least frequent.
+        self.pz_letter_frequency = dict(sorted(self.pz_letter_frequency.items(), key=operator.itemgetter(1),reverse=True ))
         
     def wordLengthsFrequency(self):
         '''
         Method to get a frequency count of word lengths
         It sets the self.pz.len_words_frequency attribute
         '''
-        self.word_lengths_freqeuncy = {}
+        self.pz_word_lengths_freqeuncy = {}
         # If it doesn't exist then create it
         if not hasattr(self, 'pz_words_as_array_without_punctuation'):
             self.wordsWithoutPunction()
         for word in self.pz_words_as_array_without_punctuation:
-            if len(word) not in self.word_lengths_freqeuncy:
-                self.word_lengths_freqeuncy[len(word)] =0
-            self.word_lengths_freqeuncy[len(word)] += 1
+            if len(word) not in self.pz_word_lengths_freqeuncy:
+                self.pz_word_lengths_freqeuncy[len(word)] =0
+            self.pz_word_lengths_freqeuncy[len(word)] += 1
       
+    def bothAandI(self):
+        '''
+        There is a possibility that both A and I will be a puzzle so need to check for that. 
+        '''
+        oneLetterWords = []
+        for word in self.pz_words_as_array_without_punctuation:
+            if len(word) == 1 and word not in oneLetterWords:
+                oneLetterWords.append(word)
+        if len(oneLetterWords) > 1:
+            return True
+        return False
+        
         
         
     def isThereApostrophes(self):
@@ -142,7 +170,7 @@ class Puzzle:
         For example, the word 'the' may appear two or even three times
         Knowing there are duplicates is helpful
         '''
-        self.word_counts = collections.Counter(self.pz_words_as_array_without_punctuation)
+        self.pz_word_counts = collections.Counter(self.pz_words_as_array_without_punctuation)
         
     
 
@@ -157,6 +185,7 @@ class Puzzle:
             self.pz_blank_puzzle += char
         pz_string_as_lines = self.pz_as_string.split('\n')
         blank_pz_as_lines = self.pz_blank_puzzle.split('\n')
+        print("\n")
         for i in range(len(pz_string_as_lines)):
             print(blank_pz_as_lines[i])
             print(pz_string_as_lines[i])

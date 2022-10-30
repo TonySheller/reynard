@@ -98,7 +98,7 @@ class TestOne(unittest.TestCase):
         Confirm word_lengths_frequency works
         '''
         self.reynard.wordLengthsFrequency()
-        self.assertEqual(8, len(self.reynard.word_lengths_freqeuncy))
+        self.assertEqual(8, len(self.reynard.pz_word_lengths_freqeuncy))
         
         
     def testBlankPuzzle(self):

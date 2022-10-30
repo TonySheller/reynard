@@ -20,10 +20,9 @@ class TestOne(unittest.TestCase):
         
     def setUp(self):
         '''
-        setup method for hte unit tests. 
+        setup method for the unit tests. 
         '''
-        self.reynard = Puzzle()
-        self.reynard.readInPuzzle('/mnt/e/OneDrive - Johns Hopkins/EN.605.745/reynard/data/pz2.txt')
+        self.reynard = Puzzle('/mnt/e/OneDrive - Johns Hopkins/EN.605.745/reynard/data/pz2.txt')
     
     def tearDown(self):
         '''
@@ -31,7 +30,12 @@ class TestOne(unittest.TestCase):
         '''
         del(self.reynard)
         
-
+    def testAandIMethod(self):
+        '''
+        This method tests for both A and I in a puzzle.  having both of these
+        one letter words.
+        '''
+        self.assertTrue(self.reynard.bothAandI())
 
 if __name__ == '__main__':
     unittest.main()

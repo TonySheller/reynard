@@ -103,3 +103,12 @@ great must these can days every found general her here last new now people \
 public said since still such through under up war well where while years before \
 between country debts good him interest large like make our take upon what'.split(' ')
 
+
+# These are constants used as termination states in Reynard
+# Why did it terminate?
+
+# a one letter word was not an A or an I
+TERMINATEONELETTERWORD = -2
+TERMINATETWOLETTERWORD = -2
+BOARDFULL = 0
+NOMOREACTIONS = 0
