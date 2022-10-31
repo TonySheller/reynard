@@ -76,7 +76,7 @@ class mcts():
             for i in range(self.searchLimit):
                 self.executeRound()
 
-       # bestChild = self.getBestChild(self.root, 0)
+        #bestChild = self.getBestChild(self.root, 0)
         #action=(action for action, node in self.root.children.items() if node is bestChild).__next__()
         #if needDetails:
         #    return {"action": action, "expectedReward": bestChild.totalReward / bestChild.numVisits}

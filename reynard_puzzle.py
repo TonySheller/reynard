@@ -13,6 +13,7 @@ import reynard_constants
 import os
 import collections
 import operator
+import string
 
 
 
@@ -68,7 +69,8 @@ class Puzzle:
         '''
         Method that splits text into words with punctuiona. 
         '''
-        self.pz_words_as_array_with_punctuation = nltk.word_tokenize(self.pz_as_string)
+        tokenizer = RegexpTokenizer("[\w']+") ## The \w' will leave in the apostrophe
+        self.pz_words_as_array_with_punctuation = tokenizer.tokenize(self.pz_as_string)
     
     def wordsWithoutPunction(self):
         '''
@@ -87,9 +89,13 @@ class Puzzle:
         # If it doesn't exist then create it
         if not hasattr(self, 'pz_words_as_array_without_punctuation'):
             self.wordsWithoutPunction()
+        # use split on this on the original and see what happens.
         for word in self.pz_words_as_array_without_punctuation:
+            if "'" in word:
+                word = ''.join(word.split("'")) # pull out the apostrophe so we can count letters
             for char in word:
-                if char not in self.pz_letter_frequency and char in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
+                if char not in self.pz_letter_frequency \
+                    and char in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
                     self.pz_letter_frequency[char] = 0
                 self.pz_letter_frequency[char] += 1
         summed = sum(self.pz_letter_frequency.values())
@@ -185,7 +191,7 @@ class Puzzle:
             self.pz_blank_puzzle += char
         pz_string_as_lines = self.pz_as_string.split('\n')
         blank_pz_as_lines = self.pz_blank_puzzle.split('\n')
-        print("\n")
+#        print("\n")
         for i in range(len(pz_string_as_lines)):
             print(blank_pz_as_lines[i])
             print(pz_string_as_lines[i])

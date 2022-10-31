@@ -63,31 +63,19 @@ class ReynardStateAorI:
         '''
         possibleActions = []
         # We're making a new list of actions.
-        #Get the one letter words in the puzzle
-        oneLetterWords=[]
-        for word in self.puzzle.pz_words_as_array_without_punctuation:
-            if len(word) == 1 and word not in oneLetterWords:
-                oneLetterWords.append(word) # more of a character
-        
-        
         x_actions_taken =  [ action.x for action in self.actions_taken]
         y_actions_taken = [action.y for action in self.actions_taken]
-        
-        for key in oneLetterWords:
-            #if key not in x_actions_taken:
-            for key2 in ['A','I']:     
-                if key != key2:
-                    action = Action(player=self.currentPlayer,x=key,y=key2)
+        for key in self.puzzle.pz_letter_frequency.keys():
+            if key not in x_actions_taken:
+                for key2 in letter_frequency_wiki.keys():
                     
-                    if len(self.actions_taken) > 0:
-                        if not len([act for act in self.actions_taken if  action.x == act.x and action.y == act.y]):
-                            possibleActions.append(action)
-                    else:
-                        possibleActions.append(action)
-#        print("{}".format(len(possibleActions)))
+                    if key != key2 and key2 not in y_actions_taken:
+                       possibleActions.append(Action(player=self.currentPlayer,x=key,y=key2))
+        print("Length of Possible Actions is {}".format(len(possibleActions)))
         return possibleActions
+    
 
-    def actionUtilityOnlyOne(self,action):
+    def actionUtility(self,action):
         '''
         This method works when there is only A or I present but not both. 
         I decided on using the number of words that occur as a result of the letter being used.
@@ -98,42 +86,27 @@ class ReynardStateAorI:
         temp_word_list = tokenizer.tokenize(''.join(self.board))
         
         for word in temp_word_list:
-            if action.y in word:
-                possible_words = list(set([wd.lower() for wd in words.words() if len(wd) == len(word) and wd.lower()[word.index(action.y)] == action.y.lower() and d.check(wd.lower())]))
-                utilityScore += len(possible_words)
+            index_list =[]
+            for i in range(len(word)):
+                if word[i] != '_' and word[i] != "'":
+                    index_list.append(i)
+                if len(index_list) > 0:
+                    ## Contstruct a regular expression????
+                    wordsOfLength = [wd.lower() for wd in words.words() if len(wd) == len(word) and  d.check(wd.lower())]
+                    possible_words =[]
+                    for wd in wordsOfLength:
+                        for j in index_list:
+                            if wd.lower()[j] == word[j]:
+                                possible_words.append(wd)
+                            else:
+                                break
+                            
+#                        print("poossible_words length is {} ".format(len(possible_words)))
+#list(set([wd.lower() for wd in words.words() if len(wd) == len(word) and wd.lower()[word.index(action.y)] == action.y.lower() and wd.lower()[word.index(other_action.y)] == other_action.y.lower() and d.check(wd.lower())]))
+                        utilityScore += len(possible_words)
         action.utility = utilityScore
         return action
 
-    def actionUtilityBoth(self,action):
-        '''
-        This method works when there is only A or I present but not both. 
-        I decided on using the number of words that occur as a result of the letter being used.
-        '''
-        pb_actions = self.getPossibleActions()
-        #Get the opposing action
-        #NEED TO FIX THIS
-        other_action = [act for act in pb_actions if action.x != act.x and action.y != act.y] [0]
-        # Take this action
-        for i in range(len(self.board)):            
-            if self.puzzle.pz_array[i] == other_action.x:
-                self.board[i] = other_action.y
-        
-        d = enchant.Dict('en.US')
-        utilityScore = 0
-        tokenizer = RegexpTokenizer("[\w']+") ## The \w' will leave in the apostrophe
-        temp_word_list = tokenizer.tokenize(''.join(self.board))
-        
-        for word in temp_word_list:
-            if action.y in word and other_action.y in word:
-                possible_words = list(set([wd.lower() for wd in words.words() if len(wd) == len(word) and wd.lower()[word.index(action.y)] == action.y.lower() and wd.lower()[word.index(other_action.y)] == other_action.y.lower() and d.check(wd.lower())]))
-                ## Modify this
-                utilityScore += len(possible_words)
-        action.utility = utilityScore
-        other_action.utility = utilityScore
-        action.joint_action = other_action
-        #other_action.joint_action = action
-
-        return action
 
 
     def takeAction(self, action):
@@ -146,15 +119,8 @@ class ReynardStateAorI:
             if newState.puzzle.pz_array[i] == action.x:
                 newState.board[i] = action.y
         if not newState.puzzle.bothAandI():
-            action = newState.actionUtilityOnlyOne(action)
+            action = newState.actionUtility(action)
             newState.actions_taken.append(action)
-        else:
-            action = newState.actionUtilityBoth(action)
-            newState.actions_taken.append(action)
-            newState.actions_taken.append(action.joint_action)
-        print("action {} it's utility is {}".format(action,action.utility))
-        if hasattr(action,'joint_action' ):     
-            print("Joint Action is {} utility value is {}".format(action.joint_action))
             
 #        print("Action {} taken".format(action))
 #        print("\n{} \n".format(self.puzzle.pz_as_string))

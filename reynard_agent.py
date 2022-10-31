@@ -31,7 +31,7 @@ class Agent:
         if not puzzle:
             print("Please provide a puzzle as an argument")
             return -1
-        self.pz = Puzzle('data/pz1.txt')
+        self.pz = Puzzle(puzzle)
         self.pz_string = puzzle
         
     def reason(self):
@@ -47,24 +47,26 @@ class Agent:
         '''
         # Check for one letter words in the puzzle
         #self.aori = ReynardStateAorI(self.pz_string)
-        check_this = ' '.join(self.pz.pz_words_as_array_without_punctuation)
         oneLetterWords=[]
         for word in self.pz.pz_words_as_array_without_punctuation:
             if len(word) == 1 and word not in oneLetterWords:
                 oneLetterWords.append(word) # more of a character
                 
         if len(oneLetterWords) > 0:
-            print("yes, therer are one letter words")
+            #print("yes, there are one letter words {}".format(oneLetterWords))
             self.aori = ReynardStateAorI(self.pz_string)       
-    
+        else:
+            #print("Sorry No one letter words")
+            return False
+        
         aori = ReynardStateAorI(self.pz_string)    
-        searcher = mcts(timeLimit=5000,iterations=10)
+        searcher = mcts(timeLimit=5000)
     
         action = searcher.search(initialState=self.aori)
-        print('search complete and action provided')
-        print(action)    
+        return action 
 
 if __name__ == "__main__":
-    rnag = Agent('data/pz1.txt')
-    rnag.oneLetterWords()
+    
+    rnag = Agent('data/pz2.txt')
+    action = rnag.oneLetterWords()
     
