@@ -69,7 +69,7 @@ class Puzzle:
         '''
         Method that splits text into words with punctuiona. 
         '''
-        tokenizer = RegexpTokenizer("[\w']+") ## The \w' will leave in the apostrophe
+        tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         self.pz_words_as_array_with_punctuation = tokenizer.tokenize(self.pz_as_string)
     
     def wordsWithoutPunction(self):
@@ -77,7 +77,7 @@ class Puzzle:
         Method to get all words without punctuation
         Note May want to figure out how to leave apostrophes in.
         '''
-        tokenizer = RegexpTokenizer("[\w']+") ## The \w' will leave in the apostrophe
+        tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         self.pz_words_as_array_without_punctuation = tokenizer.tokenize(self.pz_as_string)
         
     def letterFrequency(self):
