@@ -90,11 +90,12 @@ double_letter_frequency = 'ss ee tt ff ll mm oo'.split(' ')
 top_tweenty_most_used_words_in_written_english = 'the of to in and a for was is that on at he with by be it an as his'.split(' ')
 top_tweenty_most_used_words_in_spoken_english = 'the and I to of a you that in it is yes was this but on well he have for'.split(' ')
 
-two_letter_word_frequency = 'of to in it is be as at so we he by or on do if me my up an go no us am'.upper().split(' ')
+two_letter_word_frequency = 'of to in it is be as at so we he by or on do if me my up an go no us am'.split(' ')
 three_letter_word_frequency = 'the and for are but not you all any can had her was one our out day get has \
-him his how man new now old see two way who boy did its let put say she too use'.split(' ')
+him his how man new now old see two way who boy did its let put say she too use cut off fan nba air joy awe'.split(' ')
 four_letter_word_frequency = 'that with have this will your from they know want been good much some time very \
-when come here just like long make many more only over such take than them well were'.split(' ')
+when come here just like long make many more only over such take than them well were real does live dare tire \
+keep lost play draw love what tell kids give foul thin miss most slow down body find move even eyed true'.split(' ')
 word_frequency_most_common_words = 'the of and to in a is that be it by are for was as he with on his at which \
 but from has this will one have not were or all their an i there been many more \
 so when had may today who would time we about after dollars if my other some \

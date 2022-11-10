@@ -4,7 +4,7 @@ Reasoning Under Uncertainty
 EN.605.745
 
 
-tests for the reynard mcts concept
+tests for the reynard Reasoning over Cryptograms Project
 '''
 import sys,os
 
@@ -19,7 +19,7 @@ from puzzle import Puzzle
 import threading
 from itertools import combinations, permutations
 
-class TestPz4(unittest.TestCase):
+class TestPz9(unittest.TestCase):
     '''
 
     '''
@@ -27,7 +27,7 @@ class TestPz4(unittest.TestCase):
         '''
         setup method for hte unit tests. 
         '''
-        self.puzzle = Puzzle('/mnt/e/OneDrive - Johns Hopkins/EN.605.745/reynard/data/pz4.txt')
+        self.puzzle = Puzzle('/mnt/e/OneDrive - Johns Hopkins/EN.605.745/reynard/data/pz9.txt')
     
     def tearDown(self):
         '''
@@ -36,13 +36,14 @@ class TestPz4(unittest.TestCase):
         del(self.puzzle)
 
         
-    def testPz4MakeInitialGuess(self):
+    def testPz9MakeInitialGuess(self):
         '''
-        pz4 does not have a one letter word in it
+        For puzzle 8 there are no one letter words
         '''
         agent = Agent(puzzle=self.puzzle)
         agent.makeInitialGuess()
-        self.assertEqual(0.0, agent.root.utility)
+        self.assertGreaterEqual(agent.root.utility,0.0 )
+        # 
         if not agent.puzzle.bothAandI():
             for ltr in ['A','I']:
                 agent.assignAorI(agent.root, ltr)

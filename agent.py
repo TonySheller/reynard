@@ -15,18 +15,18 @@ import enchant
 import pyAgrum as gum
 from reynard_constants import *
 from puzzle import Puzzle
-from action import Action
 from tree import Tree
 from string import ascii_uppercase
 import re
 from itertools import combinations, permutations
+import threading
+from time import sleep
 
 class Agent:
     '''
     This is the robot, prefer agent, that reasons its way through solving a cryptogram
     
     '''
-    
     
     def __init__(self,puzzle=None):
         '''
@@ -36,196 +36,157 @@ class Agent:
         if not puzzle:
             print("Please provide a puzzle as an argument")
             return -1
+        
         self.puzzle= puzzle
-        self.state = self.puzzle.pz_blank_puzzle_array
         self.root = Tree(parent=None)
-        self.root.assignState(self.state)
-        self.root.utility = 0
+        self.root.assignState(self.puzzle.pz_blank_puzzle_array)
+        self.d = enchant.Dict('en.GB')
+        self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
+        self.root.game_state = self.puzzle.pz_blank_puzzle_array
+        
+    def __del__(self):
+        pass
+        
 
+    def adjust_key(self):
+        pass
 
-    def checkActionInThere(self,actions):
-        for action in actions:
-            pass
-    
-    def pruneActions(self,actions,key):
+    def utility(self,node):
         '''
+        
         '''
-        wordIndex = []
-        actionIndex = []
-        for i in range(len(actions[0])):
-            if key in actions[0][i].y:
-                actionIndex.append(i)
-                wordIndex.append(actions[0][i].y.index(key))
-        idxList =[]   
-        tempActions = []
-        for z in range(len(actions)):
-            charLst = []
-            for m in range(len(actionIndex)):
-                char = actions[z][actionIndex[m]].x[wordIndex[m]]
-                charLst.append(char)
-            if len(set(charLst)) == 1:
-                tempActions.append(actions[z])
-           
-            
-
-                    
-        return tempActions
-    
-    def formMultiActions(self,pa,node):
-        '''
-        Take the list of actions and form them into multiple actions
-        '''
-        lettersUsed =  []
-        possibleActions = []
-        the_Ys = list(set([action.y for action in pa]))
-        the_Ys.sort()
-        the_Xs =list(set([action.x for action in pa]))
-        perms = list(permutations(the_Xs, len(the_Ys)))
-        # Take a look at the Ys.
-        # Are the letters all unique 
-    
-        for item in perms:
-            multiAction = []
-            append = append = True
-            for i in range(len(item)):
-                multiAction.append(Action(item[i],the_Ys[i]))
-            possibleActions.append(multiAction)
-
-        # Narrow actions further
-        lf = {}
-        for wd in the_Ys:
-            for char in wd:
-                if char not in lf:
-                    lf[char] = 1
-                else:
-                    lf[char] += 1
-        newPossibleActions = []
-        for key in lf:
-            if lf[key] > 1:
-                ## Duplicate Letters
-                possibleActions = self.pruneActions(possibleActions,key)
-
-                # Now we need to 
-                
-        return possibleActions 
-    
-    
-    def getPossibleActions(self,searchWords,node):
-        '''
-        Pass in a list of words of the same length to try in locations in the puzzle
-        searchWords :: actual words that correspond words of the same length
-        in the puzzle
-        node :: We need to know the current state so we can take appropriate actions.            
-        '''
-        possibleActions = []
-
-        # Assume all words will be the same length
-        # It's my design 
-        word_length = len(searchWords[0])
-
-        wordsInPuzzle=[]
-        for word in self.puzzle.pz_words_as_array_without_punctuation:
-            if len(word) ==  word_length and word not in wordsInPuzzle:
-                wordsInPuzzle.append(word) # more of a character
-        for key in searchWords:
-            #if key not in x_actions_taken:
-            for key2 in wordsInPuzzle:     
-                if key != key2:
-                    possibleActions.append(Action(x=key,y=key2))
-
-        if len(wordsInPuzzle) > 1:
-            # There are more than one of the words of this length so need to combine
-            possibleActions = self.formMultiActions(possibleActions,node)
-        #print("{}".format(len(possibleActions)))
-        return possibleActions
-    
-    
-    def anyLetterInWord(self,word):
-        '''
-        Check to see if letters are in the word 
-        '''
-        return any([a in ascii_uppercase for a in (list(word))])
-    
-    def returnRegExp(self,word):
-        '''
-        Generates the regular expression for the word so we can search for it
-        '''
-        regex = ''
-        for char in list(word):
-            if char in ascii_uppercase:
-                regex += char.lower()
-            elif char == "'": # For apostrophe words
-                regex += char
+        wordTruth = []
+        checkThis = self.tokenizer.tokenize(''.join(node.state))
+        for word in checkThis:
+            if len(word) == 1 and word in ['A','I']:
+                wordTruth.append(1)
+            if len(word) == 2 and word.lower() in two_letter_word_frequency:
+                wordTruth.append(1)
+            elif len(word) == 3 and word.lower() in three_letter_word_frequency:
+                wordTruth.append(1)
+            elif len(word) == 4 and word.lower() in four_letter_word_frequency:
+                wordTruth.append(1)
             else:
-                regex += "."
-        return regex
-                
-    
-    def utilityMeasure(self,tree):
-        '''
-        '''
-        d = enchant.Dict('en.US')
-        utilityScore = 0
-        tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
-        temp_word_list = tokenizer.tokenize(''.join(tree.state))
-        for word in temp_word_list:
-            index_list =[]
-            if self.anyLetterInWord(word):
-                    rgx = re.compile(self.returnRegExp(word))
-                    possible_words = list(set([wd.lower() for wd in words.words() if len(wd) == len(word) and d.check(wd.lower()) and rgx.match(wd.lower())]))
+                wordTruth.append(0)
+        node.utility = sum(wordTruth)/len(wordTruth)                
 
-                    utilityScore += len(possible_words)
-        if type(tree.action) != list:
-            tree.action.utility = utilityScore            
-        else:
-            for act in tree.action:
-                act.utility = utilityScore
-        tree.utility= utilityScore
+    def makeState(self,guess):
+        state = []
+        for lt in self.puzzle.pz_array:
+            if lt in ascii_uppercase:
+                state.append(guess[lt])
+            else:
+                state.append(lt)
+        return state
     
-    def takeMultiAction(self,actions,node):
+    def makeGameState(self,node):
+        for ky in node.letter.keys():
+            for i in range(len(self.puzzle.pz_array)):
+                if self.puzzle.pz_array[i] == ky:
+                    node.game_state[i] = node.letter[ky]
+                    print('tada')
+                             
+    def makeInitialGuess(self):
+        print("Making a guess")
+        firstGuess = []
+        pz_keys = self.puzzle.pz_letter_frequency.keys()
+        gs_keys = letter_frequency_wiki.keys()
+                    
+        firstGuess = dict(zip(pz_keys,gs_keys))
+        print("Guess Ready")
+        state = []
+        self.root.key = firstGuess
+        self.root.state = self.makeState(firstGuess)
+        self.utility(self.root)
         
-        tree = Tree(parent=node)
-        tree.action = actions
-        tree.assignState(self.state)
-        for action in actions:
-            for i in range(len(self.state)):
-                ## More letters now need to do by character
-                for char in action.y:
-                    if char in tree.state: 
-                        print("This letter used so can't use it again {} from {}".format(char,action.y))
-                        break # Don't use this word            
-                    elif self.puzzle.pz_array[i] == char and tree.state[i] not in ascii_uppercase:
-                        tree.state[i] = action.x[action.y.index(char)]
+     
+    def swapLetter(self,node,fromLtr):
+        to_idx = ''
+            
+            
         
-        if len(node.children) > 0:
-            for nd in node.children:
-                if not any([nd.state == tree.state for nd in node.children]):
-                    self.utilityMeasure(tree)
-                    node.addChild(tree)
-        else:
-            self.utilityMeasure(tree)
-            node.addChild(tree)
+        
+    def assignAorI(self,node,ltr):
+        if self.puzzle.wordsOfLength(1):
+            pz = self.puzzle.pz_words_as_array_without_punctuation
+            oneLtWd = list(set([wd for wd in pz if len(wd) == 1]))
+            if len(oneLtWd) > 1:
 
-    
-    def takeAction(self,action,node):
-        if type(action) == list:
-            self.takeMultiAction(action,node)
-            return
+                for i in [['A','I'],['I','A']]:
+                    k=0
+                    ltrs = {}
+                    temp_key = deepcopy(node.key)
+                    tree = Tree(parent = node)
+                    for j in i:
+                        # Get the index of the key whose value is A or I
+                        from_idx = list(node.key.keys())[list(node.key.values()).index(j)]
+                    
+                        # If the other values is the index of the opposite then get index of 'E'
+                        if j == 'A' and node.key[from_idx] == 'A':
+                            pass
+                             # Don't change it! we got it right!
+                        elif j == 'I' and node.key[from_idx] == 'I':
+                            pass
+                            # Again I is in an acceptable location
+                        else:
+                            # Now we want to swap things around 
+                            if j == 'A':
+                                from_idx = oneLtWd[k]
+                            elif j == 'I':
+                                from_idx = oneLtWd[k]
+                            k+=1 
+                            tempValue = temp_key[from_idx]
+                            temp_key[from_idx] = j
+                            temp_key[to_idx] = tempValue
+                            ltrs[from_idx] =j
+                    tree.key = temp_key
+                    tree.letter = ltrs
+                    tree.state = self.makeState(temp_key)
+                    tree.game_state = deepcopy(node.game_state)
+                    self.makeGameState(tree)
         
-        tree = Tree(parent=node)
-        tree.action = action
-        tree.assignState(self.state)
-        for i in range(len(self.state)):            
-            if self.puzzle.pz_array[i] == action.y:
-                tree.state[i] = action.x
-        self.utilityMeasure(tree)         
-        node.addChild(tree)
+
+                    self.utility(tree)
+                    node.children.append(tree)
+                print("pause")                            
+                        
+            else:
+                to_idx = ''
+                tree = Tree(parent = node)
+                for i in range(len(self.puzzle.pz_words_as_array_without_punctuation)):
+                    if len(self.puzzle.pz_words_as_array_without_punctuation[i]) == 1:
+                        to_idx = self.puzzle.pz_words_as_array_without_punctuation[i]
+                        break # as we've got the key
+                temp_key  = deepcopy(node.key)
+                other_val = node.key[to_idx]
+                other_idx = list(node.key.keys())[list(node.key.values()).index(ltr)]
+                temp_key[to_idx] = ltr
+                temp_key[other_idx] = other_val
+                tree.key = temp_key
+                tree.letter[to_idx] = ltr
+                tree.state = self.makeState(temp_key)
+                tree.game_state = deepcopy(node.game_state)
+                self.makeGameState(tree)
+                self.utility(tree)
+                node.children.append(tree)
+                print("pause")
+ 
+                        
+
+
 
 
 
 if __name__ == "__main__":
     puzzle = Puzzle('data/pz1.txt')
     agent = Agent(puzzle=puzzle)
+    agent.makeInitialGuess()
+    if agent.puzzle.wordsOfLength(1):
+        if not agent.puzzle.bothAandI():
+            for ltr in ['A','I']:
+                agent.assignAorI(agent.root, ltr)
+        else:
+            agent.assignAorI(node, ['A','I'])
     
     print("pause")
     

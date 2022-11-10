@@ -4,7 +4,7 @@ Reasoning Under Uncertainty
 EN.605.745
 
 
-tests for the reynard mcts concept
+tests for the reynard Reasoning over Cryptograms Project
 '''
 import sys,os
 
@@ -16,8 +16,10 @@ import math
 from reynard_constants import *
 from agent import Agent
 from puzzle import Puzzle
+import threading
+from itertools import combinations, permutations
 
-class TestPZ5(unittest.TestCase):
+class TestPz5(unittest.TestCase):
     '''
 
     '''
@@ -34,72 +36,23 @@ class TestPZ5(unittest.TestCase):
         del(self.puzzle)
 
         
-    def testpz5GetActions(self):
+    def testPz5MakeInitialGuess(self):
         '''
-        Evaluate getting the actions
+        For puzzle 5 we start with a correct guess of 0.07894
         '''
-       
-        agent = Agent(self.puzzle)
-        # The agent will create a puzzle for itself. The MCTS will do the same
-        actions =[]
-        if 1 in self.puzzle.pz_word_lengths_freqeuncy.keys():
-            actions = agent.getPossibleActions(['A','I'],agent.root)
-            
-        self.assertEqual(len(actions), 0)
-        
-        
-    def testpz5TakeActions(self):
-        '''
-        Evaluate Taking the actions
-        '''
-        agent = Agent(self.puzzle)
-        # The agent will create a puzzle for itself. The MCTS will do the same
-        #actions =[]
-        if 1 in self.puzzle.pz_word_lengths_freqeuncy:
-            actions = agent.getPossibleActions(['A','I'],agent.root)
-            for action in actions:
-                agent.takeAction(action,agent.root)
-
-        self.assertTrue(len(agent.root.children) == 0)           
-
-
-
-    def testPz5twoLetterWords(self):
-        agent = Agent(self.puzzle)
-        if 1 in self.puzzle.pz_word_lengths_freqeuncy:
-            actions = agent.getPossibleActions(['A','I'],agent.root)
-            self.assertEqual(len(actions), 0)
-            for action in actions:
-                agent.takeAction(action,agent.root)
-
-            self.assertTrue(len(agent.root.children) == 0)           
-        ## Assume we did the one letter word thing
-        
-        if 2 in self.puzzle.pz_word_lengths_freqeuncy:
-            actions = agent.getPossibleActions(two_letter_word_frequency,agent.root)
-            self.assertTrue(len(actions)==11550)
-            for mAction in actions:
-                if mAction[0].x == 'WE' and mAction[0].y == 'CL':
-                    if mAction[1].x == 'TO' and mAction[1].y == 'MX':
-                        if mAction[2].x == 'OF' and mAction[2].y == 'XE':
-                            if mAction[3].x == 'US' and mAction[3].y == 'YR':
-                                self.assertEqual(1, 1)
-                                return
-            
-            # CL = WE
-            # XE = DO
-            # MX = TO
-            # YR = US       
-            #for child in agent.root.children:
-            #    for action in actions:
-            #        agent.takeAction(action, child)
-            
-            #print("Wow")
-
-
-
-
+        agent = Agent(puzzle=self.puzzle)
+        agent.makeInitialGuess()
+        self.assertGreaterEqual(agent.root.utility,0.0 )
+        # 
+        if not agent.puzzle.bothAandI():
+            for ltr in ['A','I']:
+                agent.assignAorI(agent.root, ltr)
+        else:
+            agent.assignAorI(agent.root, ['A','I'])
+        self.assertEqual(len(agent.root.children),2)
+        print("")
         
 
+        
 if __name__ == '__main__':
     unittest.main()

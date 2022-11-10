@@ -16,8 +16,10 @@ import math
 from reynard_constants import *
 from agent import Agent
 from puzzle import Puzzle
+import threading
+from itertools import combinations, permutations
 
-class TestSetFour(unittest.TestCase):
+class TestPz1(unittest.TestCase):
     '''
 
     '''
@@ -34,64 +36,16 @@ class TestSetFour(unittest.TestCase):
         del(self.puzzle)
 
         
-    def testpz1GetActionsOneLetter(self):
-        '''
-        Evaluate getting the actions
-        '''
-       
-        agent = Agent(self.puzzle)
-        # The agent will create a puzzle for itself. The MCTS will do the same
-        #actions =[]
-        if 1 in self.puzzle.pz_word_lengths_freqeuncy.keys():
-            actions = agent.getPossibleActions(['A','I'],agent.root)
-            
-        self.assertEqual(len(actions), 2)
+    def testPz1MakeInitialGuess(self):
+        puzzle = Puzzle('data/pz1.txt')
+        agent = Agent(puzzle=puzzle)
+        agent.makeInitialGuess()
+        self.assertEqual(0.0, agent.root.utility)
+        for ltr in ['A','I']:
+            agent.assignAorI(agent.root, ltr)
+        self.assertEqual(len(agent.root.children),2)
+        for child in agent.root.children:
+            self.assertTrue(child.utility >= agent.root.utility)
         
-        
-    def testpz1TakeActionsOneLetter(self):
-        '''
-        Evaluate Taking the actions
-        '''
-        agent = Agent(self.puzzle)
-        # The agent will create a puzzle for itself. The MCTS will do the same
-        #actions =[]
-        if 1 in self.puzzle.pz_word_lengths_freqeuncy:
-            actions = agent.getPossibleActions(['A','I'],agent.root)
-            self.assertEqual(len(actions), 2)
-            for action in actions:
-                agent.takeAction(action,agent.root)
-
-        self.assertTrue(len(agent.root.children) == 2)           
-
-
-    def test_twoLetterWords(self):
-        agent = Agent(self.puzzle)
-        if 1 in self.puzzle.pz_word_lengths_freqeuncy:
-            actions = agent.getPossibleActions(['A','I'],agent.root)
-            self.assertEqual(len(actions), 2)
-            for action in actions:
-                agent.takeAction(action,agent.root)
-
-            self.assertTrue(len(agent.root.children) == 2)           
-        ## Assume we did the one letter word thing
-        
-        if 2 in self.puzzle.pz_word_lengths_freqeuncy:
-            actions = agent.getPossibleActions(two_letter_word_frequency,agent.root)
-            print("pausing")
-            for mAction in actions:
-                if mAction[0].x == 'IT' and mAction[0].y == 'CK':
-                    if mAction[1].x == 'OF' and mAction[1].y == 'GH':
-                        if mAction[2].x == 'TO' and mAction[2].y == 'KG':
-                            if mAction[3].x == 'ME' and mAction[3].y == 'QM':
-                                self.assertEqual(1, 1)               
-            # MK = IS
-            # ML = TO
-            # QM = ME
-            # GH = OF    
-                     
-            #for child in agent.root.children:
-            #    for action in actions:
-            #        agent.takeAction(action, child)
-
 if __name__ == '__main__':
     unittest.main()

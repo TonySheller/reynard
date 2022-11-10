@@ -31,19 +31,21 @@ class Puzzle:
             self.wordsWithPunctuation()
             self.wordsWithoutPunction()
             self.isThereApostrophes() 
-            self.letterFrequency()
+            self.pz_letter_frequency =self.letterFrequency()
             self.wordLengthsFrequency()
             self.generateBlankPuzzle()
             self.generateEmptyKey()
+            
     
     def generateEmptyKey(self):
         '''
         Generate an empty key 
         '''
-        self.pz_key = {}
+        pz_key = {}
         for key in self.pz_letter_frequency:
-            self.pz_key[key] = "_"
+            pz_key[key] = "_"
             
+        return pz_key
             
         
         
@@ -64,6 +66,7 @@ class Puzzle:
             self.pz_as_string = temp
             for char in self.pz_as_string:
                 self.pz_array.append(char)
+        
 
     def wordsWithPunctuation(self):
         '''
@@ -85,7 +88,7 @@ class Puzzle:
         Method to get the frequency count of letters in the puzzle
         It sets the self.pz_letter_frequency attribute
         '''
-        self.pz_letter_frequency = {}
+        pz_letter_frequency = {}
         # If it doesn't exist then create it
         if not hasattr(self, 'pz_words_as_array_without_punctuation'):
             self.wordsWithoutPunction()
@@ -94,15 +97,16 @@ class Puzzle:
             if "'" in word:
                 word = ''.join(word.split("'")) # pull out the apostrophe so we can count letters
             for char in word:
-                if char not in self.pz_letter_frequency \
+                if char not in pz_letter_frequency \
                     and char in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
-                    self.pz_letter_frequency[char] = 0
-                self.pz_letter_frequency[char] += 1
-        summed = sum(self.pz_letter_frequency.values())
-        for key in self.pz_letter_frequency:
-            self.pz_letter_frequency[key] = float("{:.4f}".format(self.pz_letter_frequency[key]/summed))
+                    pz_letter_frequency[char] = 0
+                pz_letter_frequency[char] += 1
+        summed = sum(pz_letter_frequency.values())
+        for key in pz_letter_frequency:
+            pz_letter_frequency[key] = float("{:.4f}".format(pz_letter_frequency[key]/summed))
         # Now rearrange them according to most frequent to least frequent.
-        self.pz_letter_frequency = dict(sorted(self.pz_letter_frequency.items(), key=operator.itemgetter(1),reverse=True ))
+        pz_letter_frequency = dict(sorted(pz_letter_frequency.items(), key=operator.itemgetter(1),reverse=True ))
+        return pz_letter_frequency
         
     def wordLengthsFrequency(self):
         '''
@@ -130,7 +134,11 @@ class Puzzle:
             return True
         return False
         
-        
+    def wordsOfLength(self,length):
+        '''
+        Simple method to return 
+        '''     
+        return length in self.pz_word_lengths_freqeuncy.keys()
         
     def isThereApostrophes(self):
         '''
