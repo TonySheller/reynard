@@ -27,7 +27,7 @@ class TestPz11(unittest.TestCase):
         '''
         setup method for hte unit tests. 
         '''
-        self.puzzle = Puzzle('/mnt/e/OneDrive - Johns Hopkins/EN.605.745/reynard/data/pz12.txt')
+        self.puzzle = Puzzle('/home/asheller/reynard/data/pz12.txt')
     
     def tearDown(self):
         '''
@@ -36,7 +36,7 @@ class TestPz11(unittest.TestCase):
         del(self.puzzle)
 
         
-    def testPz11MakeInitialGuess(self):
+    def testPz12MakeInitialGuess(self):
         '''
         For puzzle 10 I and A are both in the phrase.
         '''

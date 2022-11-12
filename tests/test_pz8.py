@@ -27,7 +27,7 @@ class TestPz8(unittest.TestCase):
         '''
         setup method for hte unit tests. 
         '''
-        self.puzzle = Puzzle('/mnt/e/OneDrive - Johns Hopkins/EN.605.745/reynard/data/pz8.txt')
+        self.puzzle = Puzzle('/home/asheller/reynard/data/pz8.txt')
     
     def tearDown(self):
         '''

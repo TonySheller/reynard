@@ -4,7 +4,7 @@ Reasoning Under Uncertainty
 EN.605.745
 
 
-tests for the reynard mcts concept
+tests for the reynard concept
 '''
 import sys,os
 
@@ -27,7 +27,7 @@ class TestPz4(unittest.TestCase):
         '''
         setup method for hte unit tests. 
         '''
-        self.puzzle = Puzzle('/mnt/e/OneDrive - Johns Hopkins/EN.605.745/reynard/data/pz4.txt')
+        self.puzzle = Puzzle('/home/asheller/reynard/data/pz4.txt')
     
     def tearDown(self):
         '''

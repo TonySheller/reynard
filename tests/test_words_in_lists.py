@@ -23,7 +23,7 @@ import nltk # Natural Language Toolkit
 from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import words
 
-
+FILE = '/home/asheller/reynard/data'
 
 class TestSetPz1Solution(unittest.TestCase):
     '''
@@ -56,7 +56,7 @@ class TestSetPz1Solution(unittest.TestCase):
         '''
         
         '''
-        self.readSolution('/mnt/e/OneDrive - Johns Hopkins/EN.605.745/reynard/data/solutions/sol1.txt')
+        self.readSolution('/home/asheller/reynard/data/solutions/sol1.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         wordTruth = []
         checkThis = self.tokenizer.tokenize(self.solution_as_string)
@@ -79,7 +79,7 @@ class TestSetPz1Solution(unittest.TestCase):
         '''
         
         '''
-        self.readSolution('/mnt/e/OneDrive - Johns Hopkins/EN.605.745/reynard/data/solutions/sol2.txt')
+        self.readSolution('/home/asheller/reynard/data/solutions/sol2.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         wordTruth = []
         checkThis = self.tokenizer.tokenize(self.solution_as_string)
@@ -101,7 +101,7 @@ class TestSetPz1Solution(unittest.TestCase):
         '''
         
         '''
-        self.readSolution('/mnt/e/OneDrive - Johns Hopkins/EN.605.745/reynard/data/solutions/sol3.txt')
+        self.readSolution('/home/asheller/reynard/data/solutions/sol3.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         wordTruth = []
         checkThis = self.tokenizer.tokenize(self.solution_as_string)
@@ -124,7 +124,7 @@ class TestSetPz1Solution(unittest.TestCase):
         '''
         
         '''
-        self.readSolution('/mnt/e/OneDrive - Johns Hopkins/EN.605.745/reynard/data/solutions/sol4.txt')
+        self.readSolution('/home/asheller/reynard/data/solutions/sol4.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         wordTruth = []
         checkThis = self.tokenizer.tokenize(self.solution_as_string)
@@ -146,7 +146,7 @@ class TestSetPz1Solution(unittest.TestCase):
             self.assertTrue(1==2)
 
     def testpz5(self):
-        self.readSolution('/mnt/e/OneDrive - Johns Hopkins/EN.605.745/reynard/data/solutions/sol5.txt')
+        self.readSolution('/home/asheller/reynard/data/solutions/sol5.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         wordTruth = []
         checkThis = self.tokenizer.tokenize(self.solution_as_string)
@@ -165,7 +165,7 @@ class TestSetPz1Solution(unittest.TestCase):
             self.assertTrue(1==2)
 
     def testpz6(self):
-        self.readSolution('/mnt/e/OneDrive - Johns Hopkins/EN.605.745/reynard/data/solutions/sol6.txt')
+        self.readSolution('/home/asheller/reynard/data/solutions/sol6.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         wordTruth = []
         checkThis = self.tokenizer.tokenize(self.solution_as_string)
@@ -185,7 +185,7 @@ class TestSetPz1Solution(unittest.TestCase):
             
             
     def testpz7(self):
-        self.readSolution('/mnt/e/OneDrive - Johns Hopkins/EN.605.745/reynard/data/solutions/sol7.txt')
+        self.readSolution('/home/asheller/reynard/data/solutions/sol7.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         wordTruth = []
         checkThis = self.tokenizer.tokenize(self.solution_as_string)
@@ -204,7 +204,7 @@ class TestSetPz1Solution(unittest.TestCase):
             self.assertTrue(1==2)
 
     def testpz8(self):
-        self.readSolution('/mnt/e/OneDrive - Johns Hopkins/EN.605.745/reynard/data/solutions/sol8.txt')
+        self.readSolution('/home/asheller/reynard/data/solutions/sol8.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         wordTruth = []
         checkThis = self.tokenizer.tokenize(self.solution_as_string)
@@ -223,7 +223,7 @@ class TestSetPz1Solution(unittest.TestCase):
             self.assertTrue(1==2)
 
     def testpz9(self):
-        self.readSolution('/mnt/e/OneDrive - Johns Hopkins/EN.605.745/reynard/data/solutions/sol9.txt')
+        self.readSolution('/home/asheller/reynard/data/solutions/sol9.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         wordTruth = []
         checkThis = self.tokenizer.tokenize(self.solution_as_string)
@@ -243,7 +243,7 @@ class TestSetPz1Solution(unittest.TestCase):
 
 
     def testpz10(self):
-        self.readSolution('/mnt/e/OneDrive - Johns Hopkins/EN.605.745/reynard/data/solutions/sol10.txt')
+        self.readSolution('/home/asheller/reynard/data/solutions/sol10.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         wordTruth = []
         checkThis = self.tokenizer.tokenize(self.solution_as_string)
@@ -266,7 +266,7 @@ class TestSetPz1Solution(unittest.TestCase):
             
             
     def testpz11(self):
-        self.readSolution('/mnt/e/OneDrive - Johns Hopkins/EN.605.745/reynard/data/solutions/sol11.txt')
+        self.readSolution('/home/asheller/reynard/data/solutions/sol11.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         wordTruth = []
         checkThis = self.tokenizer.tokenize(self.solution_as_string)
@@ -285,8 +285,8 @@ class TestSetPz1Solution(unittest.TestCase):
             self.assertTrue(1==2)
 
 
-    def testpz11(self):
-        self.readSolution('/mnt/e/OneDrive - Johns Hopkins/EN.605.745/reynard/data/solutions/sol12.txt')
+    def testpz12(self):
+        self.readSolution('/home/asheller/reynard/data/solutions/sol12.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         wordTruth = []
         checkThis = self.tokenizer.tokenize(self.solution_as_string)
