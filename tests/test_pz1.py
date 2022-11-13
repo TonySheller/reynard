@@ -19,6 +19,8 @@ from puzzle import Puzzle
 import threading
 from itertools import combinations, permutations
 
+FILE_PATH = '../reynard'
+
 class TestPz1(unittest.TestCase):
     '''
 
@@ -27,7 +29,7 @@ class TestPz1(unittest.TestCase):
         '''
         setup method for hte unit tests. 
         '''
-        self.puzzle = Puzzle('/home/asheller/reynard/data/pz1.txt')
+        self.puzzle = Puzzle(FILE_PATH + '/data/pz1.txt')
     
     def tearDown(self):
         '''
@@ -37,8 +39,8 @@ class TestPz1(unittest.TestCase):
 
         
     def testPz1MakeInitialGuess(self):
-        puzzle = Puzzle('data/pz1.txt')
-        agent = Agent(puzzle=puzzle)
+        #puzzle = Puzzle(self.puzzle)
+        agent = Agent(puzzle=self.puzzle)
         agent.makeInitialGuess()
         self.assertEqual(0.0, agent.root.utility)
         for ltr in ['A','I']:
@@ -46,6 +48,66 @@ class TestPz1(unittest.TestCase):
         self.assertEqual(len(agent.root.children),2)
         for child in agent.root.children:
             self.assertTrue(child.utility >= agent.root.utility)
+            
+    def testPz1WordsBeginWithAorI(self):
+        agent = Agent(puzzle=self.puzzle)
+        agent.makeInitialGuess()
+        self.assertEqual(0.0, agent.root.utility)
+        
+        if not agent.puzzle.bothAandI():
+            for ltr in ['A','I']:
+                agent.assignAorI(agent.root, ltr)
+        else:
+            agent.assignAorI(agent.root, ['A','I'])
+        self.assertEqual(len(agent.root.children),2)  
+        for child in agent.root.children:
+            self.assertTrue(child.utility >= agent.root.utility)
+        
+        agent.twoLtWdsBeginWithAorI()
+        for child in agent.root.children:
+            self.assertTrue(len(child.children) == 0)
+            
+    def testPz1WordsBeginWithAorI(self):
+        agent = Agent(puzzle=self.puzzle)
+        agent.makeInitialGuess()
+        self.assertEqual(0.0, agent.root.utility)
+        
+        if not agent.puzzle.bothAandI():
+            for ltr in ['A','I']:
+                agent.assignAorI(agent.root, ltr)
+        else:
+            agent.assignAorI(agent.root, ['A','I'])
+        self.assertEqual(len(agent.root.children),2)  
+        for child in agent.root.children:
+            self.assertTrue(child.utility >= agent.root.utility)
+        
+        agent.twoLtWdsBeginWithAorI()
+        for child in agent.root.children:
+            self.assertTrue(len(child.children) == 0)
+            
+    def testPz1OtherTwoLetterWords(self):
+        agent = Agent(puzzle=self.puzzle)
+        agent.makeInitialGuess()
+        self.assertEqual(0.0, agent.root.utility)
+        
+        if not agent.puzzle.bothAandI():
+            for ltr in ['A','I']:
+                agent.assignAorI(agent.root, ltr)
+        else:
+            agent.assignAorI(agent.root, ['A','I'])
+        self.assertEqual(len(agent.root.children),2)  
+        for child in agent.root.children:
+            self.assertTrue(child.utility >= agent.root.utility)
+        
+        agent.twoLtWdsBeginWithAorI()
+        iter = agent.puzzle.pz_word_lengths_freqeuncy[2]
+        for i in range(iter):
+            agent.recurseDownTryTwoLtWds(agent.root, two_letter_word_frequency)
+            print("I is {}".format(i))
+                
+        print("pause")
+                
+    
         
 if __name__ == '__main__':
     unittest.main()

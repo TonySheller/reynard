@@ -117,7 +117,8 @@ class Puzzle:
         # If it doesn't exist then create it
         if not hasattr(self, 'pz_words_as_array_without_punctuation'):
             self.wordsWithoutPunction()
-        for word in self.pz_words_as_array_without_punctuation:
+        words =list(set([word for word in self.pz_words_as_array_without_punctuation]))
+        for word in words:
             if len(word) not in self.pz_word_lengths_freqeuncy:
                 self.pz_word_lengths_freqeuncy[len(word)] =0
             self.pz_word_lengths_freqeuncy[len(word)] += 1

@@ -20,7 +20,7 @@ import threading
 from itertools import combinations, permutations
 
 FILE_PATH = '../reynard'
-class TestPz7(unittest.TestCase):
+class TestPz14(unittest.TestCase):
     '''
 
     '''
@@ -28,7 +28,7 @@ class TestPz7(unittest.TestCase):
         '''
         setup method for hte unit tests. 
         '''
-        self.puzzle = Puzzle(FILE_PATH+ '/data/pz7.txt')
+        self.puzzle = Puzzle(FILE_PATH + '/data/pz19.txt')
     
     def tearDown(self):
         '''
@@ -37,24 +37,9 @@ class TestPz7(unittest.TestCase):
         del(self.puzzle)
 
         
-    def testPz7MakeInitialGuess(self):
+    def testPz19MakeInitialGuess(self):
         '''
-        For puzzle 7 there are no one letter words
-        '''
-        agent = Agent(puzzle=self.puzzle)
-        agent.makeInitialGuess()
-        self.assertGreaterEqual(agent.root.utility,0.0 )
-        # 
-        if not agent.puzzle.bothAandI():
-            for ltr in ['A','I']:
-                agent.assignAorI(agent.root, ltr)
-        else:
-            agent.assignAorI(agent.root, ['A','I'])
-        self.assertEqual(len(agent.root.children),0)
-
-    def testPz7TwoLtWdsBeginWithAorI(self):
-        '''
-        For puzzle 7 there are no one letter words
+        For puzzle 12 I and A are both in the phrase.
         '''
         agent = Agent(puzzle=self.puzzle)
         agent.makeInitialGuess()
@@ -65,9 +50,24 @@ class TestPz7(unittest.TestCase):
                 agent.assignAorI(agent.root, ltr)
         else:
             agent.assignAorI(agent.root, ['A','I'])
-        self.assertEqual(len(agent.root.children),0)
-        agent.twoLtWdsBeginWithAorI()
+        self.assertEqual(len(agent.root.children),2)
         
+
+    def testPz19TwoLtWdBeginWithAorI(self):
+        '''
+
+        '''
+        agent = Agent(puzzle=self.puzzle)
+        agent.makeInitialGuess()
+        self.assertGreaterEqual(agent.root.utility,0.0 )
+        # 
+        if not agent.puzzle.bothAandI():
+            for ltr in ['A','I']:
+                agent.assignAorI(agent.root, ltr)
+        else:
+            agent.assignAorI(agent.root, ['A','I'])
+        self.assertEqual(len(agent.root.children),2)
+        agent.twoLtWdsBeginWithAorI()
 
         
 if __name__ == '__main__':

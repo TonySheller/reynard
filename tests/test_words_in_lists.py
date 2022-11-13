@@ -23,7 +23,8 @@ import nltk # Natural Language Toolkit
 from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import words
 
-FILE = '/home/asheller/reynard/data'
+#FILE = '/home/asheller/reynard/data'
+FILE_PATH = '../reynard'
 
 class TestSetPz1Solution(unittest.TestCase):
     '''
@@ -56,7 +57,7 @@ class TestSetPz1Solution(unittest.TestCase):
         '''
         
         '''
-        self.readSolution('/home/asheller/reynard/data/solutions/sol1.txt')
+        self.readSolution(FILE_PATH + '/data/solutions/sol1.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         wordTruth = []
         checkThis = self.tokenizer.tokenize(self.solution_as_string)
@@ -79,7 +80,7 @@ class TestSetPz1Solution(unittest.TestCase):
         '''
         
         '''
-        self.readSolution('/home/asheller/reynard/data/solutions/sol2.txt')
+        self.readSolution(FILE_PATH + '/data/solutions/sol2.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         wordTruth = []
         checkThis = self.tokenizer.tokenize(self.solution_as_string)
@@ -101,7 +102,7 @@ class TestSetPz1Solution(unittest.TestCase):
         '''
         
         '''
-        self.readSolution('/home/asheller/reynard/data/solutions/sol3.txt')
+        self.readSolution(FILE_PATH + '/data/solutions/sol3.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         wordTruth = []
         checkThis = self.tokenizer.tokenize(self.solution_as_string)
@@ -124,7 +125,7 @@ class TestSetPz1Solution(unittest.TestCase):
         '''
         
         '''
-        self.readSolution('/home/asheller/reynard/data/solutions/sol4.txt')
+        self.readSolution(FILE_PATH + '/data/solutions/sol4.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         wordTruth = []
         checkThis = self.tokenizer.tokenize(self.solution_as_string)
@@ -146,7 +147,7 @@ class TestSetPz1Solution(unittest.TestCase):
             self.assertTrue(1==2)
 
     def testpz5(self):
-        self.readSolution('/home/asheller/reynard/data/solutions/sol5.txt')
+        self.readSolution(FILE_PATH + '/data/solutions/sol5.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         wordTruth = []
         checkThis = self.tokenizer.tokenize(self.solution_as_string)
@@ -165,7 +166,7 @@ class TestSetPz1Solution(unittest.TestCase):
             self.assertTrue(1==2)
 
     def testpz6(self):
-        self.readSolution('/home/asheller/reynard/data/solutions/sol6.txt')
+        self.readSolution(FILE_PATH + '/data/solutions/sol6.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         wordTruth = []
         checkThis = self.tokenizer.tokenize(self.solution_as_string)
@@ -185,7 +186,7 @@ class TestSetPz1Solution(unittest.TestCase):
             
             
     def testpz7(self):
-        self.readSolution('/home/asheller/reynard/data/solutions/sol7.txt')
+        self.readSolution(FILE_PATH + '/data/solutions/sol7.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         wordTruth = []
         checkThis = self.tokenizer.tokenize(self.solution_as_string)
@@ -204,7 +205,7 @@ class TestSetPz1Solution(unittest.TestCase):
             self.assertTrue(1==2)
 
     def testpz8(self):
-        self.readSolution('/home/asheller/reynard/data/solutions/sol8.txt')
+        self.readSolution(FILE_PATH + '/data/solutions/sol8.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         wordTruth = []
         checkThis = self.tokenizer.tokenize(self.solution_as_string)
@@ -223,7 +224,7 @@ class TestSetPz1Solution(unittest.TestCase):
             self.assertTrue(1==2)
 
     def testpz9(self):
-        self.readSolution('/home/asheller/reynard/data/solutions/sol9.txt')
+        self.readSolution(FILE_PATH + '/data/solutions/sol9.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         wordTruth = []
         checkThis = self.tokenizer.tokenize(self.solution_as_string)
@@ -243,7 +244,7 @@ class TestSetPz1Solution(unittest.TestCase):
 
 
     def testpz10(self):
-        self.readSolution('/home/asheller/reynard/data/solutions/sol10.txt')
+        self.readSolution(FILE_PATH + '/data/solutions/sol10.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         wordTruth = []
         checkThis = self.tokenizer.tokenize(self.solution_as_string)
@@ -266,7 +267,7 @@ class TestSetPz1Solution(unittest.TestCase):
             
             
     def testpz11(self):
-        self.readSolution('/home/asheller/reynard/data/solutions/sol11.txt')
+        self.readSolution(FILE_PATH + '/data/solutions/sol11.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         wordTruth = []
         checkThis = self.tokenizer.tokenize(self.solution_as_string)
@@ -286,7 +287,7 @@ class TestSetPz1Solution(unittest.TestCase):
 
 
     def testpz12(self):
-        self.readSolution('/home/asheller/reynard/data/solutions/sol12.txt')
+        self.readSolution(FILE_PATH + '/data/solutions/sol12.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         wordTruth = []
         checkThis = self.tokenizer.tokenize(self.solution_as_string)
@@ -304,7 +305,110 @@ class TestSetPz1Solution(unittest.TestCase):
         if False in wordTruth:
             self.assertTrue(1==2)
 
+    def testpz13(self):
+        self.readSolution(FILE_PATH + '/data/solutions/sol13.txt')
+        self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
+        wordTruth = []
+        checkThis = self.tokenizer.tokenize(self.solution_as_string)
+        for word in checkThis:
+            if len(word) == 1:
+                wordTruth.append(word in ['A','a','I'])
+            elif len(word) == 2:
+                wordTruth.append(word.lower() in two_letter_word_frequency)
+            elif len(word) == 3:
+                wordTruth.append(word.lower() in three_letter_word_frequency)
+            elif len(word) == 4:
+                wordTruth.append(word.lower() in four_letter_word_frequency)
+            elif len(word) > 4:
+                pass
+        if False in wordTruth:
+            self.assertTrue(1==2)
 
+    def testpz14(self):
+        self.readSolution(FILE_PATH + '/data/solutions/sol14.txt')
+        self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
+        wordTruth = []
+        checkThis = self.tokenizer.tokenize(self.solution_as_string)
+        for word in checkThis:
+            if len(word) == 1:
+                wordTruth.append(word in ['A','a','I'])
+            elif len(word) == 2:
+                wordTruth.append(word.lower() in two_letter_word_frequency)
+            elif len(word) == 3:
+                wordTruth.append(word.lower() in three_letter_word_frequency)
+            elif len(word) == 4:
+                wordTruth.append(word.lower() in four_letter_word_frequency)
+            elif len(word) > 4:
+                pass
+        if False in wordTruth:
+            self.assertTrue(1==2)
+
+    def testpz15(self):
+        self.readSolution(FILE_PATH + '/data/solutions/sol15.txt')
+        self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
+        wordTruth = []
+        checkThis = self.tokenizer.tokenize(self.solution_as_string)
+        for word in checkThis:
+            if len(word) == 1:
+                wordTruth.append(word in ['A','a','I'])
+            elif len(word) == 2:
+                wordTruth.append(word.lower() in two_letter_word_frequency)
+            elif len(word) == 3:
+                wordTruth.append(word.lower() in three_letter_word_frequency)
+            elif len(word) == 4:
+                if "'" not in word:
+                    wordTruth.append(word.lower() in four_letter_word_frequency)
+                else:
+                    print('that was an apostrophe')
+            elif len(word) > 4:
+                pass
+        if False in wordTruth:
+            self.assertTrue(1==2)
+
+
+    def testpz19(self):
+        self.readSolution(FILE_PATH + '/data/solutions/sol19.txt')
+        self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
+        wordTruth = []
+        checkThis = self.tokenizer.tokenize(self.solution_as_string)
+        for word in checkThis:
+            if len(word) == 1:
+                wordTruth.append(word in ['A','a','I'])
+            elif len(word) == 2:
+                wordTruth.append(word.lower() in two_letter_word_frequency)
+            elif len(word) == 3:
+                wordTruth.append(word.lower() in three_letter_word_frequency)
+            elif len(word) == 4:
+                if "'" not in word:
+                    wordTruth.append(word.lower() in four_letter_word_frequency)
+                else:
+                    print('that was an apostrophe')
+            elif len(word) > 4:
+                pass
+        if False in wordTruth:
+            self.assertTrue(1==2)
+            
+    def testpz53(self):
+        self.readSolution(FILE_PATH + '/data/solutions/sol53.txt')
+        self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
+        wordTruth = []
+        checkThis = self.tokenizer.tokenize(self.solution_as_string)
+        for word in checkThis:
+            if len(word) == 1:
+                wordTruth.append(word in ['A','a','I'])
+            elif len(word) == 2:
+                wordTruth.append(word.lower() in two_letter_word_frequency)
+            elif len(word) == 3:
+                wordTruth.append(word.lower() in three_letter_word_frequency)
+            elif len(word) == 4:
+                if "'" not in word:
+                    wordTruth.append(word.lower() in four_letter_word_frequency)
+                else:
+                    print('that was an apostrophe')
+            elif len(word) > 4:
+                pass
+        if False in wordTruth:
+            self.assertTrue(1==2)
 
 if __name__ == '__main__':
     unittest.main()

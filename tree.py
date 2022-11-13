@@ -17,8 +17,14 @@ class Tree(Thread):
         self.parent = parent
         self.state = state
         self.utility = 0
-        self.game_state = []
+        if parent:
+            self.game_state = deepcopy(parent.game_state)
         self.letter = {}
+        if parent:
+            self.key = deepcopy(parent.key)
+        self.word = ''
+        self.expand = True
+        
 
         
     def run(self):

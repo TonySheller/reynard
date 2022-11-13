@@ -19,6 +19,9 @@ from puzzle import Puzzle
 import threading
 from itertools import combinations, permutations
 
+
+FILE_PATH = '../reynard'
+
 class TestPz2(unittest.TestCase):
     '''
 
@@ -27,7 +30,7 @@ class TestPz2(unittest.TestCase):
         '''
         setup method for hte unit tests. 
         '''
-        self.puzzle = Puzzle('/home/asheller/reynard/data/pz2.txt')
+        self.puzzle = Puzzle(FILE_PATH + '/data/pz2.txt')
     
     def tearDown(self):
         '''
@@ -39,16 +42,51 @@ class TestPz2(unittest.TestCase):
     def testPz2MakeInitialGuess(self):
         agent = Agent(puzzle=self.puzzle)
         agent.makeInitialGuess()
-        self.assertGreater(agent.root.utility,0.0)
+        self.assertGreaterEqual(agent.root.utility,0.0)
         if not agent.puzzle.bothAandI():
             for ltr in ['A','I']:
                 agent.assignAorI(agent.root, ltr)
         else:
             agent.assignAorI(agent.root, ['A','I'])
         self.assertEqual(len(agent.root.children),2)
-        print("")
-        
 
+        
+    def testPz2WordsBeginWithAorI(self):
+        agent = Agent(puzzle=self.puzzle)
+        agent.makeInitialGuess()
+        self.assertGreater(agent.root.utility,0.0)
+        if not agent.puzzle.bothAandI():
+            for ltr in ['A','I']:
+                agent.assignAorI(agent.root, ltr)
+        else:
+            agent.assignAorI(agent.root, ['A','I'])
+        self.assertEqual(len(agent.root.children),2)  
+        agent.twoLtWdsBeginWithAorI()
+        for child in agent.root.children:
+            self.assertTrue(len(child.children)>= 0)
+            
+            
+    def testPz2OtherTwoLetterWords(self):
+        agent = Agent(puzzle=self.puzzle)
+        agent.makeInitialGuess()
+        self.assertGreaterEqual(agent.root.utility,0.0)
+        
+        if not agent.puzzle.bothAandI():
+            for ltr in ['A','I']:
+                agent.assignAorI(agent.root, ltr)
+        else:
+            agent.assignAorI(agent.root, ['A','I'])
+        self.assertEqual(len(agent.root.children),2)  
+        for child in agent.root.children:
+            self.assertTrue(child.utility >= agent.root.utility)
+        
+        agent.twoLtWdsBeginWithAorI()
+        iter = agent.puzzle.pz_word_lengths_freqeuncy[2]
+        for i in range(iter):
+            agent.recurseDownTryTwoLtWds(agent.root, two_letter_word_frequency)
+            print("puase first")
+                
+        print("pause")
         
 if __name__ == '__main__':
     unittest.main()

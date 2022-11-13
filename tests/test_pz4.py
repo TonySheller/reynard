@@ -19,6 +19,9 @@ from puzzle import Puzzle
 import threading
 from itertools import combinations, permutations
 
+
+FILE_PATH = '../reynard'
+
 class TestPz4(unittest.TestCase):
     '''
 
@@ -27,7 +30,7 @@ class TestPz4(unittest.TestCase):
         '''
         setup method for hte unit tests. 
         '''
-        self.puzzle = Puzzle('/home/asheller/reynard/data/pz4.txt')
+        self.puzzle = Puzzle(FILE_PATH+ '/data/pz4.txt')
     
     def tearDown(self):
         '''
@@ -51,6 +54,20 @@ class TestPz4(unittest.TestCase):
         self.assertEqual(len(agent.root.children),0)
         print("")
         
+    def testPz4TwoLtWdsBeginWithAorI(self):
+
+        agent = Agent(puzzle=self.puzzle)
+        agent.makeInitialGuess()
+        self.assertEqual(0.0, agent.root.utility)
+        if not agent.puzzle.bothAandI():
+            for ltr in ['A','I']:
+                agent.assignAorI(agent.root, ltr)
+        else:
+            agent.assignAorI(agent.root, ['A','I'])
+        self.assertEqual(len(agent.root.children),0)
+        agent.twoLtWdsBeginWithAorI()
+        for child in agent.root.children:
+            self.assertTrue(len(child.children)> 0)        
 
         
 if __name__ == '__main__':
