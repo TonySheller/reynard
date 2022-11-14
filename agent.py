@@ -121,24 +121,29 @@ class Agent:
     def addChildToNode(self,node, fmLt, toLt,wd):
         '''
         Given the node, make this assignment
+        Only used this to add nodes to A and I
         '''
         #1. Copy the nodes values so we can add to them
         temp_key = deepcopy(node.key)
         tree = Tree(parent=node)
         current_idx = list(node.key.keys())[list(node.key.values()).index(toLt)]
+        
         other_value = node.key[fmLt]
-        temp_key[fmLt] = toLt
-        temp_key[current_idx] =other_value
-        tree.key = temp_key
+        if other_value == 'A':
+            print("NOWAY")
+        tree.key[fmLt] = toLt
+        tree.key[current_idx] =other_value
+
         tree.word = wd
         tree.letter = {fmLt:toLt}
         tree.state = self.makeState(temp_key)
-        tree.game_state = deepcopy(node.game_state)
+        
         self.makeGameState(tree)
         self.utility(tree)
-        if tree.utility > node.utility:
+        if tree.utility >= node.utility:
             node.children.append(tree)
             self.node_count += 1
+
         
     def swapLettersBasedOnKey(self,tkey,k1,k2):
         '''
@@ -196,6 +201,7 @@ class Agent:
                 if not any([k==v for k,v in ltrs.items()]):
                     for lt in ltrs.keys():
                         tree.key[lt] =ltrs[lt]
+                        tree.pz_key_used.append(lt)
                     tree.word = tlw  
                     tree.letter = ltrs
                     tree.state = self.makeState(tree.key)
@@ -206,12 +212,13 @@ class Agent:
                         self.high_node.append(tree)
                     elif tree.utility >= self.high_node[-1].utility:
                         self.high_node.append(tree)
-                    if tree.utility > 0.20:
-                        print("20% Utility Achieved!")      
+                        
                     if tree.utility > 0.25:
-                        print("Even more Wow")
+                        pass
                     if tree.utility > 0.30:
-                        print("OMG 30%")
+                        pass
+                    if tree.utility > 0.40:
+                        pass
                     
                     if tree.utility >= node.utility:
 
@@ -219,7 +226,7 @@ class Agent:
                         self.node_count += 1
                         if tree.utility >= self.high_node[-1].utility:
                             print("utility at {} for word '{}' '{}' ".format(tree.utility,tree.word.upper(),wd))
-                            ltrsN = list(set([ch for ch in node.game_state if ch in ascii_uppercase]))
+                            ltrsN = list(set([ch for ch in tree.game_state if ch in ascii_uppercase]))
                             print("\tletters used {}".format(ltrsN))
                 else:
                     pass
@@ -229,7 +236,10 @@ class Agent:
             print("NODE COUNT NOW {}".format(self.node_count))
      
     def twoLtWdsBeginWithAorI(self):
-        # Are there any two letter words that begin with A or I
+        '''
+        If we had an A or I or both then lets see if there are words that begin with A or I 
+        That we can do something about.
+        '''
         
         pz = self.puzzle.pz_words_as_array_without_punctuation
         for child in self.root.children:
@@ -301,7 +311,8 @@ class Agent:
                             ltrs[to_idx] =j
                         k += 1
                     for key in ltrs.keys():
-                        tree.key[key] = ltrs[key]    
+                        tree.key[key] = ltrs[key]
+                        tree.pz_key_used.append(key)    
                     #tree.key = temp_key
                     tree.letter = ltrs
                     tree.state = self.makeState(temp_key)
@@ -324,6 +335,7 @@ class Agent:
                 other_val = node.key[to_idx]
                 other_idx = list(node.key.keys())[list(node.key.values()).index(ltr)]
                 tree.key[to_idx] = ltr
+                tree.pz_key_used.append(to_idx)
                 tree.key[other_idx] = other_val
                 tree.letter[to_idx] = ltr
                 tree.state = self.makeState(temp_key)

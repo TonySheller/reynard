@@ -84,7 +84,7 @@ class TestPz2(unittest.TestCase):
         iter = agent.puzzle.pz_word_lengths_freqeuncy[2]
         for i in range(iter):
             agent.recurseDownTryTwoLtWds(agent.root, two_letter_word_frequency)
-            print("puase first")
+            print("Pause first")
                 
         print("pause")
         

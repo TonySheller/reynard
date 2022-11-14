@@ -19,9 +19,15 @@ class Tree(Thread):
         self.utility = 0
         if parent:
             self.game_state = deepcopy(parent.game_state)
-        self.letter = {}
-        if parent:
             self.key = deepcopy(parent.key)
+            self.pz_key_used =deepcopy((parent.pz_key_used))
+        else:
+            self.game_state = []
+            self.key = []
+            self.pz_key_used = []
+            
+        self.letter = {}
+
         self.word = ''
         self.expand = True
         
