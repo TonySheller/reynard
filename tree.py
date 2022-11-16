@@ -113,7 +113,47 @@ class Tree:
                 for i in range(len(puzzle.pz_array)):
                     if puzzle.pz_array[i] == ky:
                         self.game_state[i] = self.letter[ky]
-       
+
+
+    def validChildren(self):
+        '''
+        Method to check that the parent's gamestate agrees with the childs
+        Child's should only be different by a few
+        '''
+        if self.parent == None and len(self.children) > 0:
+            for child in self.children:
+                self.checkChildren(child)
+        elif self.parent.parent == None and len(self.children) > 0:
+            for child in self.children:
+                self.validChildren(child)
+        else:
+            for i in range(len(self.parent.game_state)):
+                if self.parent.game_state[i] in ascii_uppercase:
+                    if node.parent.game_state[i] != node.game_state[i]:
+                        return False
+        return True
+
+    def checkValidkey(self):
+        '''
+        All the letters in the key and values should be unique
+        '''
+        valueCount= {}
+        keyCount = {}
+        for ky in list(self.key.values()):
+            if ky not in valueCount.keys():
+                valueCount[ky]= 0
+            valueCount[ky] += 1
+            if valueCount[ky] > 1: 
+                return False
+        for ky2 in list(self.key.keys()):
+            if ky2 not in keyCount.keys():
+                keyCount[ky2] = 0
+            keyCount[ky] += 1
+            if keyCount[ky] > 1:
+                return False
+        return True
+
+
     def setUtility(self):
             '''
             Provides a utilty score based on the key that is being used.

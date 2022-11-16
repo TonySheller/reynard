@@ -220,13 +220,17 @@ class Agent:
             tode.setUtility()
             node.children.append(tode)
 
-            if not self.high_node:
-                self.high_node.append(tode)
-                self.
-            else:
-                if tode.utility > 0.20:
-                    self.high_node.append(tode)
-                    print("{} to {} with Utility of {}".format(tode.word,tode.word_pz,tode.utility))    
+            if tode.utility > 0.10:
+                #self.high_node.append(tode)
+                ## What was I doing here.
+                print("10%{} to {} with Utility of {}".format(tode.word,tode.word_pz,tode.utility))    
+            elif tode.utility > 0.20:
+                    #self.high_node.append(tode)
+                    print("20% {} to {} with Utility of {}".format(tode.word,tode.word_pz,tode.utility))    
+            elif tode.utility > 0.30:
+                    #self.high_node.append(tode)
+                    print("30%{} to {} with Utility of {}".format(tode.word,tode.word_pz,tode.utility))    
+
 
         else:
             print("how Interesting")
