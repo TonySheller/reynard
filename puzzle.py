@@ -140,6 +140,14 @@ class Puzzle:
         Simple method to return 
         '''     
         return length in self.pz_word_lengths_freqeuncy.keys()
+
+    def indexOfWord(self, puzz_wd):
+        '''
+        Find all indexes of this word in the puzzle
+        Return the index of the first letter
+        '''
+        returnThis = self.pz_as_string.find(puzz_wd)
+        return returnThis
         
     def isThereApostrophes(self):
         '''

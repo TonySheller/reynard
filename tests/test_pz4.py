@@ -69,6 +69,34 @@ class TestPz4(unittest.TestCase):
         for child in agent.root.children:
             self.assertTrue(len(child.children)> 0)        
 
+    
+           
+    def testPz4OtherTwoLetterWords(self):
+        agent = Agent(puzzle=self.puzzle)
+        agent.makeInitialGuess()
+        self.assertGreaterEqual(agent.root.utility,0.0)
+        
+        if not agent.puzzle.bothAandI():
+            for ltr in ['A','I']:
+                agent.assignAorI(agent.root, ltr)
+        else:
+            agent.assignAorI(agent.root, ['A','I'])
+        self.assertEqual(len(agent.root.children),0)  
+        for child in agent.root.children:
+            self.assertTrue(child.utility >= agent.root.utility)
+        
+        agent.twoLtWdsBeginWithAorI()
+        iter = agent.puzzle.pz_word_lengths_freqeuncy[2]
+        for i in range(10):
+            agent.recurseDownTryTwoLtWds(agent.root, two_letter_word_frequency)
+            print("Iteration {}".format(i))
+                
+
+        for node in agent.high_node:
+            print("word {} to {}".format(node.word,node.word_pz))
+        
+        print("pause") 
+
         
 if __name__ == '__main__':
     unittest.main()

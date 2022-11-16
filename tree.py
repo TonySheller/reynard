@@ -6,13 +6,12 @@ import nltk # Natural Language Toolkit
 from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import words
 import enchant
-from threading import Thread
 import re
 from string import ascii_uppercase
-
-class Tree(Thread):
+from random import choice
+from reynard_constants import *
+class Tree:
     def __init__(self,parent=None,state=None):
-        Thread.__init__(self)
         self.children = []
         self.parent = parent
         self.state = state
@@ -29,12 +28,11 @@ class Tree(Thread):
         self.letter = {}
 
         self.word = ''
+        self.word_pz = ''
         self.expand = True
+        self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         
 
-        
-    def run(self):
-        self.utilityMeasure()
     
     def addChild(self,child):
         self.children.append(child)
@@ -45,8 +43,100 @@ class Tree(Thread):
     def assignState(self,state):
         self.state = deepcopy(state)
         
-    
+            
+    def checkGameStateForWord(self, pz_idx, lenPzWd):
+        '''
+        For the given puzzle index is this entire
+        word blank
+        '''
+        for i in range(pz_idx,pz_idx+lenPzWd):
+            if self.game_state != '_':
+                return True
+        return False
 
+    def gameCharNotUsed(self,puzz_wd,real_wd):
+        '''
+        Given these two words, return a random character that hasn't been used 
+        '''
+        charLst = []
+        for char in self.key.keys():
+            if char not in self.pz_key_used:
+                if self.key[char] not in list(real_wd):
+                    charLst.append(char)
+        return choice(charLst)
+
+    def gameCharForWord(self,puzz_wd,real_wd):
+        '''
+        Given these two words, return the keys for real_wd
+        '''
+        charLst = []
+        for char in list(real_wd):
+            if char in list(self.key.values()):
+                charLst.append(list(self.key.keys())[list(self.key.values()).index(char)])
+            else:
+                # Note that some letters may not be used in the puzzle so need to add it 
+                # when we can.  It may be important Real Word Letters that is
+                t_key = self.gameCharForWord()
+                self.key[t_key] = char
+                charLst.append(t_key)
+        return charLst
+
+    def setState(self,puzzle):
+        '''
+        Makes the puzzle state -- given a guess it will 
+        take the puzzle and 
+        
+        '''
+        guess = self.key
+        state = []
+        for lt in puzzle.pz_array:
+            if lt in ascii_uppercase:
+                state.append(guess[lt])
+            else:
+                state.append(lt)
+        self.state = state
+    
+    def makeGameState(self,puzzle):
+        '''
+        As we go along pupulate the game board 
+        Use it for reference -- does it make sence.
+        '''
+
+        for ky in self.letter.keys():
+            tryThis = []
+            if type(self.word) == list:
+                tryThis = self.word
+            else:
+                tryThis = list(self.word.upper())
+            
+            if self.letter[ky] in tryThis:
+                for i in range(len(puzzle.pz_array)):
+                    if puzzle.pz_array[i] == ky:
+                        self.game_state[i] = self.letter[ky]
+       
+    def setUtility(self):
+            '''
+            Provides a utilty score based on the key that is being used.
+            go for one and two letters first. 
+            
+            '''
+            wordTruth = []
+            checkThis = self.tokenizer.tokenize(''.join(self.state))
+            for word in checkThis:
+                if len(word) == 1 and word in ['A','I']:
+                    wordTruth.append(1)
+                if len(word) == 2 and word.lower() in two_letter_word_frequency:
+                    wordTruth.append(1)
+                elif len(word) == 3 and word.lower() in three_letter_word_frequency:
+                    wordTruth.append(1)
+                elif len(word) == 4 and word.lower() in four_letter_word_frequency:
+                    wordTruth.append(1)
+                else:
+                    wordTruth.append(0)
+                if len(word) == 2 and word.lower()[0] in 'efklpqruvxyz':
+                    wordTruth.append(0)
+                    wordTruth.append(0)
+            self.utility = sum(wordTruth)/len(wordTruth)       
         
 if __name__ == "__main__":
     pass

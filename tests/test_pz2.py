@@ -67,6 +67,11 @@ class TestPz2(unittest.TestCase):
             
             
     def testPz2OtherTwoLetterWords(self):
+        '''
+        This tries other two letter words but its not useful
+        becasue pz2's only two letter words begin with I (IS, IN)
+        '''
+        
         agent = Agent(puzzle=self.puzzle)
         agent.makeInitialGuess()
         self.assertGreaterEqual(agent.root.utility,0.0)
@@ -82,9 +87,8 @@ class TestPz2(unittest.TestCase):
         
         agent.twoLtWdsBeginWithAorI()
         iter = agent.puzzle.pz_word_lengths_freqeuncy[2]
-        for i in range(iter):
+        for i in range(10):
             agent.recurseDownTryTwoLtWds(agent.root, two_letter_word_frequency)
-            print("Pause first")
                 
         print("pause")
         
