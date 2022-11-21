@@ -70,7 +70,7 @@ class Puzzle:
 
     def wordsWithPunctuation(self):
         '''
-        Method that splits text into words with punctuiona. 
+        Method that splits text into words with punctuation. 
         '''
         tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         self.pz_words_as_array_with_punctuation = tokenizer.tokenize(self.pz_as_string)
