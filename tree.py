@@ -1,4 +1,13 @@
+'''
+Reynard is an agent that uses reasoning to solve cryptograms. 
 
+This module contains a datastructure called Tree.  Each node will be a Tree in 
+that it can have more than one child.  
+
+Anthony Sheller
+Reasoning Under Uncertainty
+EN.605.745
+'''
 
 
 from copy import deepcopy
@@ -200,7 +209,7 @@ class Tree:
 
             '''
             wordTruth = []
-            checkThis = self.tokenizer.tokenize(''.join(self.state))
+            checkThis = self.tokenizer.tokenize(''.join(self.game_state))
             for word in checkThis:
                 if '_' not in word:
                     if len(word) == 1 and word in ['A','I']:
@@ -208,7 +217,6 @@ class Tree:
                             wordTruth.append(1)
                         wordTruth.append(1)
                     if len(word) == 2 and word.lower() in two_letter_word_frequency:
-                        wordTruth.append(1)
                         wordTruth.append(1)
                     elif len(word) == 3 and word.lower() in three_letter_word_frequency:
                         wordTruth.append(1)
@@ -227,10 +235,7 @@ class Tree:
                         wordTruth.append(0)
                         wordTruth.append(0)
                         wordTruth.append(0)
-                    if len(word) == 2:
-                        if word[0] not in ['aeiou'] and word[1] not in ['aeiou']:
-                           for i in range(4):
-                               wordTruth.append(0)
+
                             
                 else:
                     wordTruth.append(0)

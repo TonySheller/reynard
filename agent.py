@@ -8,7 +8,7 @@ The agent is being constructed in a separate module for
 compactness and separation of concerns (agent from data)
 '''
 
-from copy import deepcopy
+from copy import deepcopy, copy
 import nltk # Natural Language Toolkit
 from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import words
@@ -22,9 +22,18 @@ import re
 from itertools import combinations, permutations
 import threading
 from time import sleep,time
+from datetime import timedelta
+import statistics
+import hashlib
+import json
+from multiprocessing import Process, Value,Queue
 
-EXPANSION_LEVEL = 55000
+
+EXPANSION_LEVEL = 500
 VALIDATE = False
+VERBOSE = True
+
+
 class Agent:
     '''
     This is agent that reasons its way through solving a cryptogram
@@ -52,7 +61,9 @@ class Agent:
         self.tooManyNodes = False
         self.keys_tried = []
         self.root.puzzle = self.puzzle.pz_array
-        self.itcount = 0    
+        self.itcount = 0
+        self.roots = []
+        self.hashkeysUsed = []    
     def startPuzzle(self):
         '''
         The opening move --
@@ -89,7 +100,7 @@ class Agent:
         tree.word = wd
         tree.word_pz = wd_pz
         tree.letter = {fmLt:toLt}
-        tree.state = self.makeState(temp_key) 
+        #tree.state = self.makeState(temp_key) 
         tree.makeGameState(self.puzzle)
         tree.setUtility()
         if tree.utility >= node.utility:        
@@ -144,7 +155,7 @@ class Agent:
         pz_idx = self.puzzle.indexOfWord(puzz_wd)
         # Are these puzzle keys available for use?
         if node.checkGameStateForWord(pz_idx, len(puzz_wd)):
-            tode = deepcopy((node))
+            tode = deepcopy(node)
             del tode.children
             tode.children = []
             tode.parent = node
@@ -175,6 +186,7 @@ class Agent:
                 if not tode.checkValidkey():
                     print("Validation Failed -- something is wrong")
             tode.word = real_wd
+
             tode.word_pz = puzz_wd
             tode.setState(self.puzzle)
             tode.makeGameState(self.puzzle)
@@ -182,30 +194,26 @@ class Agent:
                 if not tode.checkValidkey():
                     print("Validation Failed -- something is wrong")
             tode.setUtility()
-            if self.checkkey(tode):
-                print("This is the key so far")
             ## Deciding to add node or not
-            if not tode.keyValueUsed() and tode.utility > node.utility:
-                if tode.shouldAddChildren() and tode.utility >= minUtility:
-                    node.children.append(tode)
-                    self.node_count += 1
-                    print("Adding {} utility is {}".format(tode.letter,round(tode.utility,3)))
-
-                if self.checkkey(tode):
-                    print("This is the key so far")
-
-                    #if not self.high_node:
-                    #    self.high_node.append(tode)
-                        #print("{} to {} with Utility of {}".format(tode.word,tode.word_pz,tode.utility))    
-                    #elif tode.utility >= self.high_node[-1].utility:
-                    #    self.high_node.append(tode)
-                    #    print("{} to {} with Utility of {}".format(tode.word,tode.word_pz,tode.utility))    
-                    if VALIDATE:
-                        if not tode.validChildren():
-                            print("Validation Failed -- something is wrong -- child overwrote parent's key")
-                else:
+            dhash = hashlib.md5()
+            encoded = json.dumps(tode.key,sort_keys=True).encode()
+            dhash.update(encoded)
+            tode.hash = dhash.hexdigest()
+            if tode.hash not in self.hashkeysUsed:
+                if not tode.keyValueUsed() and tode.utility > node.utility:
+                    if tode.shouldAddChildren() and tode.utility > minUtility:
+                        node.children.append(tode)
+                        self.node_count += 1
+                        self.hashkeysUsed.append(dhash.hexdigest())
+                        print("Adding {} utility is {}".format(tode.letter,round(tode.utility,3)))
+                        if VALIDATE:
+                            if not tode.validChildren():
+                                print("Validation Failed -- something is wrong -- child overwrote parent's key")
+            else:
+                if dhash.hexdigest() in self.hashkeysUsed:
                     pass
-                    #print("not adding {} utility too low {}".format(tode.letter,tode.utility))
+                    #print("not adding {} {} already added".format(tode.letter,round(tode.utility,3)))
+
         else:
             pass
             #print("Cannot Assign {} <-> {} || used set is {}".format(real_wd,puzz_wd,node.pz_key_used))
@@ -217,13 +225,12 @@ class Agent:
         When we get into this function we're going to be dangling on
         the end of a node. and need to  
         '''
-
         for puzz_wd in self.puzzle.pz_words_as_array_without_punctuation:
+   
             for real_wd in wdLst:
                 if len(puzz_wd) == len(real_wd) and node.word != real_wd:
                     self.tryWord(node,puzz_wd,real_wd.upper(),minUtility)
 
-     
     def twoLtWdsBeginWithAorI(self):
         '''
         If we had an A or I or both then lets see if there are words that begin with A or I 
@@ -332,6 +339,7 @@ class Agent:
     def otherWordsThisLength(self,node,length):
         '''
         We need to see if we can fill in all the words of a certain length.
+        Are there other words of this length?
         '''
         if len(node.children) > 0:
             for child in node.children:
@@ -353,82 +361,87 @@ class Agent:
             if len(child.children) > 0:
                 self.filterSearch(child, limit,search_list)
             else:
-                if child.utility > limit:
+                if child.utility >= limit:
                     tode = deepcopy(child)
-                    tode.parent = None
                     search_list.append(tode)
+
                 else:
-                    print("node {} not good {} < {}".format(child.letter,round(child.utility,3),limit))
+                    pass
+                    
+                    print("node {} not good {} < {}".format(child.letter,child.utility,round(limit,3)))
         return search_list 
                     
-    def processTwoLetterWords(self):
+    def getAvgChildUtility(self,node,avgUtil):
+        for child in node.children:
+            if len(child.children) > 0: 
+                return self.getAvgChildUtility(child, avgUtil)
+            
+ 
+            avgUtil.append(child.utility)
+
+        return statistics.mode(avgUtil) 
+
+    def processTwoLetterWords(self,node,start_index,end_index):
         if self.puzzle.wordsOfLength(2):
-            # do an initial pass
-            self.traverseTree(self.root,two_letter_word_frequency,0.10)
-            iterationCount = 0
-            search_list = []
-            new_list = self.filterSearch(self.root, 0.10,search_list)
-            filters =[0.15, 0.20, 0.25,0.30,0.35,0.40,0.50]
-            for i in range(self.puzzle.pz_word_lengths_freqeuncy[2] - 1):
-                for newagent in new_list:
-                    print("newagent {} {}".format(newagent.letter, newagent.utility))
-                    
-                    iterationCount += 1
-                    self.traverseTree(newagent,two_letter_word_frequency,filters[i])
-                    et = time()
-                    search_list = []
-                    new_child_list = agent.filterSearch(newagent,filters[i],search_list)
-                    newagent.children = new_child_list
-           
-            if len(new_list) > 0:
+            # do an initial pass 
+            newRoot = None
+            children = []
+            for i in range(self.puzzle.uniqueWordsThisLength(2)):
+                if len(node.children) > 0:
+                    filter = self.getAvgChildUtility(node,[])
+                else:
+                    filter = node.utility
+                print("Filter Value is {}".format(filter))
+                self.traverseTree(node,two_letter_word_frequency[start_index:end_index],filter)
+                iterationCount = 0
+                search_list = []
+                filter = self.getAvgChildUtility(node, [])
+                temp_list = self.filterSearch(node,filter,search_list)
+                newRoot = deepcopy(node)
+                newRoot.parent = self.root
+                newRoot.children = []
+                self.node_count = 0
+                for item in temp_list:
+                    item.parent = newRoot
+                    newRoot.children.append(item)
+                    self.node_count += 1
 
-                self.root.children = new_list
+            node.children = newRoot.children
 
-    def checkkey(self,node):
-        if all([k in list(node.letter.keys()) for k in list('XCKGQM') ]):
-            if all([k in list(node.letter.values()) for k in list('AITOME') ]):
-                if node.letter['X'] == 'A':
-                    if node.letter['C'] == 'I':
-                        if node.letter['K'] == 'T':
-                            if node.letter['G'] == 'O':
-                                if node.letter['Q'] == 'M':
-                                    if node.letter['M'] == 'E':
-                                        print("this is the one we want to live")
-                                        return True
-        return False
 
-    def processThreeLetterWords(self):
-        if self.puzzle.pz_word_lengths_freqeuncy[2] <= 1:
-            filters =[0.10,0.20,0.25, 0.30]
-        elif agent.puzzle.pz_word_lengths_freqeuncy[2] == 2:
-            filters =[0.10,0.20,0.30,0.40]
-        elif  agent.puzzle.pz_word_lengths_freqeuncy[2] > 3:
-            filters =[0.20,0.25,0.30,0.35,0.40,0.50,]  
+    def processThreeLetterWords(self,node,start_idx,end_idx):
         if self.puzzle.wordsOfLength(3):
+            # do an initial pass 
+            newRoot = None
+            children = []
+            for i in range(self.puzzle.uniqueWordsThisLength(3)):
+                if len(node.children) > 0:
+                    filter = self.getAvgChildUtility(node,[])
+                else:
+                    filter = node.utility
+                print("Filter Value is {}".format(filter))
+                self.traverseTree(node,three_letter_word_frequency[start_idx:end_idx],filter)
+                iterationCount = 0
+                search_list = []
+                filter = self.getAvgChildUtility(node, [])
+                temp_list = self.filterSearch(node,filter,search_list)
+                newRoot = deepcopy(node)
+                newRoot.parent = self.root
+                newRoot.children = []
+                self.node_count = 0
+                for item in temp_list:
+                    item.parent = newRoot
+                    newRoot.children.append(item)
+                    self.node_count += 1
 
-            # do an initial pass
-            self.traverseTree(self.root,three_letter_word_frequency,0.10)
-            iterationCount = 0
-            search_list = []
-            new_list = self.filterSearch(self.root, 0.10,search_list)
-            for i in range(self.puzzle.pz_word_lengths_freqeuncy[3] - 1):
-                for newagent in new_list:
-                    print("newagent {} {}".format(newagent.letter, newagent.utility))
-                    iterationCount += 1
-                    self.traverseTree(newagent,three_letter_word_frequency,filters[i])
-                    search_list = []
-                    new_child_list = agent.filterSearch(newagent,filters[i],search_list)
-                    newagent.children = new_child_list
-
-            if len(new_list) > 0:
-                self.root.children = new_list
-
-
+            node.children = newRoot.children
 
 if __name__ == "__main__":
     
     puzzle = Puzzle('data/pz1.txt')
     agent = Agent(puzzle=puzzle)
+    agent.temp_root = []
+    # Assign the initial guess
     agent.startPuzzle()
 
     if agent.puzzle.wordsOfLength(1):
@@ -437,23 +450,31 @@ if __name__ == "__main__":
         if not agent.puzzle.bothAandI():
             for ltr in ['A','I']:
                 agent.assignAorI(agent.root, ltr)
-        else: # The puzzle has both A and I
-            
+        else: # The puzzle has both A and I    
             agent.assignAorI(agent.root, ['A','I'])
         agent.twoLtWdsBeginWithAorI()
-        et = time()
-        #print("Execution Time for one letter words is {}".format(et-st))
 
     if agent.puzzle.wordsOfLength(2):
         startTime = time()
-        agent.processTwoLetterWords()
+  
+        for child in agent.root.children:
+            agent.processTwoLetterWords(child,0,20)
+            
+
         endTime = time()
-        print("Execution time for two letter words is {}".format(endTime-startTime))   
+        elapsed = endTime - startTime
+        elapsedTwo = str(timedelta(seconds=elapsed))
+        print("Execution time for two letter words is {}".format(elapsedTwo))   
+
 
     if agent.puzzle.wordsOfLength(3):
         startTime = time()
-        agent.processThreeLetterWords()
+
+        for child in agent.root.children:
+            agent.processThreeLetterWords(child,0,10)
+
         endTime = time()
-        print("Execution time for three letter words is {}".format(endTime-startTime))   
-    
+        elapsed = endTime - startTime
+        elapsedTwo = str(timedelta(seconds=elapsed))
+        print("Execution time for three letter words is {}".format(elapsedTwo))       
     print("pausing")

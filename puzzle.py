@@ -35,8 +35,7 @@ class Puzzle:
             self.wordLengthsFrequency()
             self.generateBlankPuzzle()
             self.generateEmptyKey()
-            
-    
+              
     def generateEmptyKey(self):
         '''
         Generate an empty key 
@@ -46,9 +45,7 @@ class Puzzle:
             pz_key[key] = "_"
             
         return pz_key
-            
-        
-        
+                   
     def readInPuzzle(self,puzzleFile):
         '''
         Method to read in the puzzle provided at the command line
@@ -67,7 +64,6 @@ class Puzzle:
             for char in self.pz_as_string:
                 self.pz_array.append(char)
         
-
     def wordsWithPunctuation(self):
         '''
         Method that splits text into words with punctuation. 
@@ -107,12 +103,26 @@ class Puzzle:
         # Now rearrange them according to most frequent to least frequent.
         pz_letter_frequency = dict(sorted(pz_letter_frequency.items(), key=operator.itemgetter(1),reverse=True ))
         return pz_letter_frequency
-        
+
+    def uniqueWordsThisLength(self,length):
+        '''
+        method to return the count of unique words of a certain length
+        '''
+        wds = {}
+        for wd in self.pz_words_as_array_without_punctuation:
+            if len(wd) == length:
+                if wd not in wds.keys():
+                    wds[wd] = 0
+                wds[wd] += 1
+        return len(wds.keys())
+
+
     def wordLengthsFrequency(self):
         '''
         Method to get a frequency count of word lengths
         It sets the self.pz.len_words_frequency attribute
         '''
+
         self.pz_word_lengths_freqeuncy = {}
         # If it doesn't exist then create it
         if not hasattr(self, 'pz_words_as_array_without_punctuation'):
@@ -186,29 +196,24 @@ class Puzzle:
             if self.pz_as_string[i] == self.pz_as_string[i+1]:
                  self.double_letter_words += 1       
 
-
     def getWordCounts(self):
         '''
         Sometimes there are duplicate words that give a clue
         For example, the word 'the' may appear two or even three times
         Knowing there are duplicates is helpful
         '''
-        self.pz_word_counts = collections.Counter(self.pz_words_as_array_without_punctuation)
-        
-    
+        self.pz_word_counts = collections.Counter(self.pz_words_as_array_without_punctuation)  
 
     def showPuzzle(self):
         '''
         Method to show the puzzle on the screen
         May consider using curses to display on the console
         '''
-        # Convert pz_blank_puzzle_array to blank puzzle
         self.pz_blank_puzzle = ''
         for char in self.pz_blank_puzzle_array:
             self.pz_blank_puzzle += char
         pz_string_as_lines = self.pz_as_string.split('\n')
         blank_pz_as_lines = self.pz_blank_puzzle.split('\n')
-#        print("\n")
         for i in range(len(pz_string_as_lines)):
             print(blank_pz_as_lines[i])
             print(pz_string_as_lines[i])

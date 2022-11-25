@@ -1,15 +1,4 @@
-'''
-Reynard is an agent that uses reasoning to solve cryptograms. 
-
-This module contains supporting constants.  They were taking up to much space in th code 
-so defined them in this separate module.
-
-
-Anthony Sheller
-Reasoning Under Uncertainty
-EN.605.7
-
-'''
+ 
 # Define letter freqeuncy based on https://www3.nd.edu/~busiforc/handouts/cryptography/letterfrequencies.html
 # This is ranked from most frequent to least frequent
 letter_frequency = {}        
@@ -104,13 +93,3 @@ them being its no only over very you into most than they day even made out first
 great must these can days every found general her here last new now people \
 public said since still such through under up war well where while years before \
 between country debts good him interest large like make our take upon what'.split(' ')
-
-
-# These are constants used as termination states in Reynard
-# Why did it terminate?
-
-# a one letter word was not an A or an I
-TERMINATEONELETTERWORD = -2
-TERMINATETWOLETTERWORD = -2
-BOARDFULL = 0
-NOMOREACTIONS = 0
