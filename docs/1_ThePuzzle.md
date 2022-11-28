@@ -19,8 +19,6 @@ The following attributes of a puzzle are generated:
 
 A method that shows that puzzle is also provided.
 
-
-
 ## Notes
 These are some notes I put in for reference.
 

@@ -29,7 +29,7 @@ import json
 from multiprocessing import Process, Value,Queue
 
 
-EXPANSION_LEVEL = 500
+MAX_NODE_COUNT = 500
 VALIDATE = False
 VERBOSE = True
 
@@ -48,22 +48,17 @@ class Agent:
         if not puzzle:
             print("Please provide a puzzle as an argument")
             return -1
-        
+
         self.puzzle= puzzle
         self.root = Tree(parent=None)
         self.root.assignState(self.puzzle.pz_blank_puzzle_array)
         self.d = enchant.Dict('en.GB')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
         self.root.game_state = self.puzzle.pz_blank_puzzle_array
-        self.high_node = []
         self.node_count = 0
-        self.node_not = 0
-        self.tooManyNodes = False
-        self.keys_tried = []
-        self.root.puzzle = self.puzzle.pz_array
-        self.itcount = 0
-        self.roots = []
-        self.hashkeysUsed = []    
+        self.hashkeysUsed = []
+        self.VERBOSE = VERBOSE
+
     def startPuzzle(self):
         '''
         The opening move --
@@ -73,10 +68,8 @@ class Agent:
         '''
         firstGuess = []
         pz_keys = self.puzzle.pz_letter_frequency.keys()
-        gs_keys = letter_frequency_wiki.keys()
-                    
+        gs_keys = letter_frequency_wiki.keys()          
         firstGuess = dict(zip(pz_keys,gs_keys))
-
         state = []
         self.root.key = firstGuess
         self.root.makeGameState(self.puzzle)
@@ -87,10 +80,9 @@ class Agent:
         Given the node, add a child to it
 
         '''
-        #1. Copy the nodes values so we can add to them
-        temp_key = deepcopy(node.key)
+        tree = deepcopy(node)
         tree.children =[]
-        tree = Tree(parent=node)
+    
         current_idx = list(node.key.keys())[list(node.key.values()).index(toLt)]
         
         other_value = node.key[fmLt]
@@ -99,15 +91,10 @@ class Agent:
         tree.key[current_idx] =other_value
         tree.word = wd
         tree.word_pz = wd_pz
-        tree.letter = {fmLt:toLt}
-        #tree.state = self.makeState(temp_key) 
+        tree.letter[fmLt] =toLt
         tree.makeGameState(self.puzzle)
         tree.setUtility()
         if tree.utility >= node.utility:        
-            if len(self.high_node) == 0:
-                self.high_node.append(tree)
-            elif tree.utility >= self.high_node[-1].utility:
-                self.high_node.append(tree)
             node.children.append(tree)
             self.node_count += 1
 
@@ -118,13 +105,10 @@ class Agent:
         '''
         r_wd_temp = real_wd
         p_wd_temp = puzz_wd
-        # if real_wd == 'HE' and puzz_wd == 'GH':
-        #     self.itcount += 1
-        #     print("{}".format(self.itcount))
         if all([lt in node.ltrsused() for lt in list(real_wd)]):
-            return
+            return # Don't bother -- these letters have been used already
         if all([lt in node.pz_key_used for lt in list(puzz_wd)]):
-            return # Just go all these letters have been used
+            return # don't bother --  all these letters have been used
         elif any([lt in node.ltrsused() for lt in list(real_wd)]) or \
             any([lt in list(puzz_wd) for lt in list(real_wd)]):
             real_wd_tmp = ''
@@ -153,20 +137,16 @@ class Agent:
             return
 
         pz_idx = self.puzzle.indexOfWord(puzz_wd)
-        # Are these puzzle keys available for use?
         if node.checkGameStateForWord(pz_idx, len(puzz_wd)):
             tode = deepcopy(node)
             del tode.children
             tode.children = []
             tode.parent = node
             swapKeys = tode.gameCharForWord(puzz_wd,real_wd)
-            # For each letter do this
             if VALIDATE:
                 if not tode.checkValidkey():
                     print("Validation Failed -- something is wrong")
             for pz_key in list(puzz_wd):
-                # Get its value
-
                 pz_val = tode.key[pz_key]
                 idx_rl_wd = list(puzz_wd).index(pz_key) # index of the letter in the real word
                 rl_key = list(tode.key.keys())[list(tode.key.values()).index(real_wd[idx_rl_wd])]
@@ -194,7 +174,7 @@ class Agent:
                 if not tode.checkValidkey():
                     print("Validation Failed -- something is wrong")
             tode.setUtility()
-            ## Deciding to add node or not
+
             dhash = hashlib.md5()
             encoded = json.dumps(tode.key,sort_keys=True).encode()
             dhash.update(encoded)
@@ -205,20 +185,21 @@ class Agent:
                         node.children.append(tode)
                         self.node_count += 1
                         self.hashkeysUsed.append(dhash.hexdigest())
-                        print("Adding {} utility is {}".format(tode.letter,round(tode.utility,3)))
+                        if self.VERBOSE:
+                            print("Adding {} utility is {}".format(tode.letter,round(tode.utility,3)))
                         if VALIDATE:
                             if not tode.validChildren():
                                 print("Validation Failed -- something is wrong -- child overwrote parent's key")
             else:
                 if dhash.hexdigest() in self.hashkeysUsed:
-                    pass
-                    #print("not adding {} {} already added".format(tode.letter,round(tode.utility,3)))
-
+                    if self.VERBOSE:
+                        print("not adding {} {} already added".format(tode.letter,round(tode.utility,3)))
         else:
-            pass
-            #print("Cannot Assign {} <-> {} || used set is {}".format(real_wd,puzz_wd,node.pz_key_used))
+            if self.VERBOSE:
+                print("Cannot Assign {} <-> {} || used set is {}".format(real_wd,puzz_wd,node.pz_key_used))
         if self.node_count % 500 == 0:
-            print("Node Count at {}.".format(self.node_count))
+            if self.VERBOSE:
+                print("Node Count at {}.".format(self.node_count))
 
     def tryWords(self,node,wdLst,minUtility):
         '''
@@ -251,7 +232,15 @@ class Agent:
                             searchString = 'FSNT'
                         for lt in searchString:
                             self.addChildToNode(child, twLtWd[1], lt, wd_pz=twLtWd, wd=ltAorI+lt)
-              
+
+    def swapLettersBasedOnValues(self, tkey,lt1,lt2):
+        lt1_idx = list(tkey.keys())[list(tkey.values()).index(lt1)]
+        lt2_idx = list(tkey.keys())[list(tkey.values()).index(lt2)]
+        returnThis ={}
+        returnThis[lt2_idx] = lt1
+        returnThis[lt1_idx] = lt2
+        return returnThis
+
     def assignAorI(self,node,ltr):
         '''
         First method coded -- needs refactored but good for now
@@ -295,8 +284,7 @@ class Agent:
                 tree.setUtility()
                 node.children.append(tree)
                 self.node_count += 1                         
-                        
-        else:
+        elif len(oneLtWd) == 1:                
             to_idx = ''
             tree = tree = deepcopy(node)
             tree.children = []
@@ -318,6 +306,9 @@ class Agent:
             node.children.append(tree)
 
             self.node_count += 1
+        elif len(oneLtWd) == 0: 
+            if self.VERBOSE:
+                print("No one letter words in this puzzle.")
  
     def traverseTree(self,node,wdLst,minUtility):
         '''
@@ -326,15 +317,11 @@ class Agent:
         '''
 
         if len(node.children) > 0:
-            if not self.tooManyNodes:
-                for child in node.children:
-                    if child.expand:
-                        self.traverseTree(child,wdLst,minUtility)
+            for child in node.children:
+                if child.expand:
+                    self.traverseTree(child,wdLst,minUtility)
         else:
-            # No children so add some based on current puzzle setup
             self.tryWords(node,wdLst,minUtility)
-            #self.tryTwoLetterWord(node,wdLst)
-        #print("leaving Recursion")
 
     def otherWordsThisLength(self,node,length):
         '''
@@ -366,9 +353,8 @@ class Agent:
                     search_list.append(tode)
 
                 else:
-                    pass
-                    
-                    print("node {} not good {} < {}".format(child.letter,child.utility,round(limit,3)))
+                    if self.VERBOSE:
+                        print("node {} not good {} < {}".format(child.letter,child.utility,round(limit,3)))
         return search_list 
                     
     def getAvgChildUtility(self,node,avgUtil):
@@ -386,12 +372,14 @@ class Agent:
             # do an initial pass 
             newRoot = None
             children = []
+            self.node_count = 0
             for i in range(self.puzzle.uniqueWordsThisLength(2)):
                 if len(node.children) > 0:
                     filter = self.getAvgChildUtility(node,[])
                 else:
                     filter = node.utility
-                print("Filter Value is {}".format(filter))
+                if self.VERBOSE:
+                    print("Filtering out trees with Utility lower than {}".format(filter))
                 self.traverseTree(node,two_letter_word_frequency[start_index:end_index],filter)
                 iterationCount = 0
                 search_list = []
@@ -400,14 +388,13 @@ class Agent:
                 newRoot = deepcopy(node)
                 newRoot.parent = self.root
                 newRoot.children = []
-                self.node_count = 0
+
                 for item in temp_list:
                     item.parent = newRoot
                     newRoot.children.append(item)
                     self.node_count += 1
 
             node.children = newRoot.children
-
 
     def processThreeLetterWords(self,node,start_idx,end_idx):
         if self.puzzle.wordsOfLength(3):
@@ -419,7 +406,8 @@ class Agent:
                     filter = self.getAvgChildUtility(node,[])
                 else:
                     filter = node.utility
-                print("Filter Value is {}".format(filter))
+                if self.VERBOSE:
+                    print("Filtering out trees with Utility Value lower than {}".format(filter))
                 self.traverseTree(node,three_letter_word_frequency[start_idx:end_idx],filter)
                 iterationCount = 0
                 search_list = []
@@ -458,7 +446,7 @@ if __name__ == "__main__":
         startTime = time()
   
         for child in agent.root.children:
-            agent.processTwoLetterWords(child,0,20)
+            agent.processTwoLetterWords(child,0,5)
             
 
         endTime = time()
@@ -471,10 +459,10 @@ if __name__ == "__main__":
         startTime = time()
 
         for child in agent.root.children:
-            agent.processThreeLetterWords(child,0,10)
+            agent.processThreeLetterWords(child,0,5)
 
         endTime = time()
         elapsed = endTime - startTime
         elapsedTwo = str(timedelta(seconds=elapsed))
         print("Execution time for three letter words is {}".format(elapsedTwo))       
-    print("pausing")
+    print("")

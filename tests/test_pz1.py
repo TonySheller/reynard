@@ -21,11 +21,12 @@ from itertools import combinations, permutations
 from string import ascii_uppercase
 from time import time,sleep
 from datetime import timedelta
-from multiprocessing import Process
+
 FILE_PATH = '../reynard'
 
 class TestPz1(unittest.TestCase):
     '''
+    One set of tests for Puzzle 1
 
     '''
     def setUp(self):
@@ -41,7 +42,7 @@ class TestPz1(unittest.TestCase):
         '''
         del(self.puzzle)
         
-    def testPz1MakeInitialGuess(self):
+    def testPz1_1_MakeInitialGuess(self):
         '''
         We should have a root node and two children nodes
         who don't have any children.
@@ -60,14 +61,11 @@ class TestPz1(unittest.TestCase):
         for child in agent.root.children:
             self.assertTrue(child.utility >= agent.root.utility)
          
-    def testPz1TwoLetterWords(self):
+    def testPz1_2_TwoLetterWords(self):
         '''
         This tries other two letter words but its not useful
         becasue pz2's only two letter words begin with I (IS, IN)
-        
-        Thre 
         '''
-        
         agent = Agent(puzzle=self.puzzle)
         agent.startPuzzle()
         self.assertEqual(0.0, agent.root.utility)
@@ -84,71 +82,20 @@ class TestPz1(unittest.TestCase):
 
         startTime = time()
         if agent.puzzle.wordsOfLength(2):
-            startTime = time()
-            if len(agent.root.children) == 2:
-                processPool = []
-                #agent.processTwoLetterWords(agent.root)
-                for child in agent.root.children:
-                    agent.processTwoLetterWords(child,0,5)
-                    #processPool.append(Process(target=agent.processTwoLetterWords, args=(child,agent.temp_root)))
-
-            endTime = time()
-            elapsed = endTime - startTime
-            elapsedTwo = str(timedelta(seconds=elapsed))
-            print("Execution time for two letter words is {}".format(elapsedTwo))  
-
-            if self.evaluateChildrenForKey(agent.root, False):
-                self.assertTrue(1==1)  
-            print("pause")
-
-    def testPz1ThreeLetterWords(self):
-        '''
-        Test to evaluate three letter words
-        '''
-        
-        agent = Agent(puzzle=self.puzzle)
-        agent.startPuzzle()
-        self.assertEqual(0.0, agent.root.utility)
-        
-        if not agent.puzzle.bothAandI():
-            for ltr in ['A','I']:
-                agent.assignAorI(agent.root, ltr)
-        else:
-            agent.assignAorI(agent.root, ['A','I'])
-        self.assertEqual(len(agent.root.children),2)
-        agent.twoLtWdsBeginWithAorI()  
-        for child in agent.root.children:
-            self.assertTrue(child.utility >= agent.root.utility)
-
-        startTime = time()
-        if agent.puzzle.wordsOfLength(2):
-            startTime = time()
-            if len(agent.root.children) == 2:
-                processPool = []
-                for child in agent.root.children:
-                    agent.processTwoLetterWords(child,0,5)
-            endTime = time()
-            elapsed = endTime - startTime
-            elapsedTwo = str(timedelta(seconds=elapsed))
-            print("Execution time for two letter words is {}".format(elapsedTwo))  
-
-            if self.evaluateChildrenForKey(agent.root, False):
-                self.assertTrue(1==1)  
-            print("pause")
-
-        startTime = time()
-        if agent.puzzle.wordsOfLength(3):
             startTime = time()
             for child in agent.root.children:
-                agent.processThreeLetterWords(child,0,5)
+                agent.processTwoLetterWords(child,0,5)
+                
+
             endTime = time()
             elapsed = endTime - startTime
             elapsedTwo = str(timedelta(seconds=elapsed))
             print("Execution time for two letter words is {}".format(elapsedTwo))  
 
-            if self.evaluateChildrenForKeyThree(agent.root, False):
-                self.assertTrue(1==1)  
-            print("pause")
+            if self.evaluateChildrenForKey(agent.root, False):
+                self.assertTrue(1==1)
+            maxVal = max(self.getHighestUtility(agent.root,[]))
+            print("Maximum Utility in this possible solution is {}".format(maxVal))
 
     def evaluateChildrenForKey(self,node,returnValue):
         '''
@@ -159,22 +106,6 @@ class TestPz1(unittest.TestCase):
                 self.evaluateChildrenForKey(child,returnValue)
         else:
             if self.checkkeyTwoLetters(node):
-                print("The key is present after words added")
-                returnValue = True
-            else:
-                returnValue = False
-        return returnValue
-
-    def evaluateChildrenForKeyThree(self,node,returnValue):
-        '''
-        Helper function for the tests 
-        '''
-        if len(node.children) > 0: 
-            for child in node.children:
-                self.evaluateChildrenForKeyThree(child,returnValue)
-        else:
-            if self.checkkeyThreeLetters(node):
-                print("The key is present after words added")
                 returnValue = True
             else:
                 returnValue = False
@@ -189,23 +120,21 @@ class TestPz1(unittest.TestCase):
                     if node.letter['C'] == 'I':
                         if node.letter['K'] == 'T':
                             if node.letter['G'] == 'O':
+                                print("Key {} :: Utility of {}  present in the puzzle".format(node.letter,round(node.utility,3)))
                                 return True
-
+        # Leaving the system stack and not finding what we were
         return False
 
-    def checkkeyThreeLetters(self,node):
+    def getHighestUtility(self,node,maxVal=[]):
         '''
-
+        What is the highest utility in the tree
         '''
-        if all([k in list(node.letter.keys()) for k in list('XCKGOQM') ]):
-                if node.letter['X'] == 'A':
-                    if node.letter['C'] == 'I':
-                        if node.letter['K'] == 'T':
-                            if node.letter['G'] == 'O':
-                                if node.letter['Q'] == 'M':
-                                    if node.letter['M'] == 'E':
-                                        return True
-        return False
+        if len(node.children) > 0: 
+            for child in node.children:
+                self.getHighestUtility(child,maxVal)    
+        else:
+            maxVal.append(node.utility)
+        return maxVal
             
 if __name__ == '__main__':
     unittest.main()

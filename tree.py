@@ -9,7 +9,6 @@ Reasoning Under Uncertainty
 EN.605.745
 '''
 
-
 from copy import deepcopy
 import nltk # Natural Language Toolkit
 from nltk.tokenize import RegexpTokenizer
@@ -28,7 +27,7 @@ class Tree:
     def __init__(self,parent=None,state=None):
         '''
         Constructor 
-        Root parent is None
+        Root parent is None -- This identifies the root
         '''
         self.children = []
         self.parent = parent
@@ -51,6 +50,9 @@ class Tree:
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
 
     def keyValueUsed(self):
+        '''
+        Is this key used
+        '''
         if self.parent == None:
             return False
         if self.parent.parent == None:
@@ -206,7 +208,7 @@ class Tree:
             '''
             Provides a utilty score based on the key that is being used.
             go for one and two letters first. 
-
+            
             '''
             wordTruth = []
             checkThis = self.tokenizer.tokenize(''.join(self.game_state))
@@ -262,7 +264,6 @@ class Tree:
             return False
         return True
             
-
 
 if __name__ == "__main__":
     pass
