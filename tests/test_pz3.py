@@ -103,21 +103,22 @@ class TestPz3(unittest.TestCase):
             endTime = time()
             elapsed = endTime - startTime
             elapsedTwo = str(timedelta(seconds=elapsed))
-            print("Execution time for two letter words is {}".format(elapsedTwo))  
-            if self.evaluateChildrenForKeyThree(agent.root, False):
-                self.assertTrue(1==1)  
+            print("Puzzle 2 -- test 4 -- Execution time for Two letter words is {}".format(elapsedTwo))  
             maxVal = max(self.getHighestUtility(agent.root,[]))
-            print("Maximum Utility in this possible solution is {}".format(maxVal))
+            print("Puzzle 2 -- test 4 -- Maximum Utility is {}".format(round(maxVal,3)))
+            print("Puzzle 2 -- test 4 -- Node Count at {}".format(agent.node_count))
+            self.evaluateChildrenForKey(agent.root, False)
+            self.evaluateChildrenForKeyThree(agent.root,returnValue =False)
         
     def testPz3_4_ThreeLetterWords(self):
         '''
-        Test to evaluate three letter words
         '''
         
         agent = Agent(puzzle=self.puzzle)
         agent.startPuzzle()
+        agent.VERBOSE = False
         self.assertEqual(0.0, agent.root.utility)
-        
+        print("Puzzle 4 -- Test 4 -- Three Letter Words")
         if not agent.puzzle.bothAandI():
             for ltr in ['A','I']:
                 agent.assignAorI(agent.root, ltr)
@@ -127,7 +128,7 @@ class TestPz3(unittest.TestCase):
         agent.twoLtWdsBeginWithAorI()  
         for child in agent.root.children:
             self.assertTrue(child.utility >= agent.root.utility)
-
+        print("\tEvaluating 2-letter words")
         startTime = time()
         if agent.puzzle.wordsOfLength(2):
             startTime = time()
@@ -136,13 +137,13 @@ class TestPz3(unittest.TestCase):
             endTime = time()
             elapsed = endTime - startTime
             elapsedTwo = str(timedelta(seconds=elapsed))
-            print("Execution time for two letter words is {}".format(elapsedTwo))  
-
-            if self.evaluateChildrenForKeyThree(agent.root, False):
-                self.assertTrue(1==1)
+            print("Puzzle 3 -- test 4 -- Execution time for Two letter words is {}".format(elapsedTwo))  
             maxVal = max(self.getHighestUtility(agent.root,[]))
-            print("Maximum Utility in this possible solution is {}".format(maxVal))
-
+            print("Puzzle 3 -- test 4 -- Maximum Utility is {}".format(round(maxVal,3)))
+            print("Puzzle 3 -- test 4 -- Node Count at {}".format(agent.node_count))
+            self.evaluateChildrenForKey(agent.root, False)
+            self.evaluateChildrenForKeyThree(agent.root,returnValue =False)
+        print("\tEvaluating 3 letter words")
         startTime = time()
         if agent.puzzle.wordsOfLength(3):
             startTime = time()
@@ -151,60 +152,14 @@ class TestPz3(unittest.TestCase):
             endTime = time()
             elapsed = endTime - startTime
             elapsedThree = str(timedelta(seconds=elapsed))
-            print("Execution time for three letter words is {}".format(elapsedThree))  
-
-            if self.evaluateChildrenForKeyThree(agent.root, False):
-                self.assertTrue(1==1)
+            print("Puzzle 3 -- test 4 -- Execution time for Three letter words is {}".format(elapsedTwo))  
             maxVal = max(self.getHighestUtility(agent.root,[]))
-            print("Maximum Utility in this possible solution is {}".format(round(maxVal,3)))  
+            print("Puzzle 3 -- test 4 -- Maximum Utility is {}".format(round(maxVal,3)))
+            print("Puzzle 3 -- test 4 -- Node Count at {}".format(agent.node_count))
+            self.evaluateChildrenForKey(agent.root, False)
+            self.evaluateChildrenForKeyThree(agent.root,returnValue =False) 
 
-
-
-    def evaluateChildrenForKeyThree(self,node,returnValue):
-        '''
-        Helper function for the tests 
-        '''
-        if len(node.children) > 0: 
-            for child in node.children:
-                self.evaluateChildrenForKeyThree(child,returnValue)
-        else:
-            if self.checkkeyThreeLetters(node):
-                returnValue = True
-            else:
-                returnValue = False
-        return returnValue
-
-    def checkkeyThreeLetters(self,node):
-        '''
-        Helper function for the tests
-        '''
-        if all([k in list(node.letter.keys()) for k in list('THQDFE') ]):
-                if node.letter['T'] == 'I':
-                    if node.letter['H'] == 'O':
-                        if node.letter['Q'] == 'T':
-                            if node.letter['D'] == 'A':
-                                if node.letter['F'] == 'N':
-                                    if node.letter['E'] == 'D':
-                                        print("Key {} :: Utility of {}  present in the puzzle".format(node.letter,round(node.utility,3)))
-                                        return True
-        # Return from system stack
-        return False
-
-
-        '''
-
-        '''
-        if all([k in list(node.letter.keys()) for k in list('XCKGOQM') ]):
-                if node.letter['X'] == 'A':
-                    if node.letter['C'] == 'I':
-                        if node.letter['K'] == 'T':
-                            if node.letter['G'] == 'O':
-                                print("Key {} :: Utility of {}  present in the puzzle".format(node.letter,round(node.utility,3)))
-                                return True
-
-        return False
-            
-    def getHighestUtility(self,node,maxVal=[]):
+ 
         '''
         What is the highest utility in the tree
         '''
@@ -227,6 +182,78 @@ class TestPz3(unittest.TestCase):
                                 return True
         # Leaving the system stack and not finding what we were
         return False
-        
+
+    def evaluateChildrenForKey(self,node,returnValue):
+        '''
+        Helper function for the tests 
+        '''
+        if len(node.children) > 0: 
+            for child in node.children:
+                self.evaluateChildrenForKey(child,returnValue)
+        else:
+           returnValue = self.checkkeyTwoLetters(node)
+        return returnValue
+
+    def evaluateChildrenForKeyThree(self,node,returnValue):
+        '''
+        Helper function for the tests 
+        '''
+        if len(node.children) > 0: 
+            for child in node.children:
+                self.evaluateChildrenForKeyThree(child,returnValue)
+        else:
+            if self.checkkeyThreeLetters(node):
+                print("The key is present after words added")
+                returnValue = True
+            else:
+                returnValue = False
+        return returnValue
+
+    def checkkeyTwoLetters(self,node):
+        '''
+        Helper function for the tests
+        '''
+        if all([k in list(node.letter.keys()) for k in list('MCKL') ]):
+                if node.letter['M'] == 'I':
+                    if node.letter['C'] == 'A':
+                        if node.letter['K'] == 'S':
+                            if node.letter['L'] == 'N':
+                                print("Key {} :: Utility of {}  present in the puzzle".format(node.letter,round(node.utility,3)))
+                                return True
+        # Leaving the system stack and not finding what we were
+        return False
+
+    def getHighestUtility(self,node,maxVal=[]):
+        '''
+        What is the highest utility in the tree
+        '''
+        if len(node.children) > 0: 
+            for child in node.children:
+                self.getHighestUtility(child,maxVal)    
+        else:
+            maxVal.append(node.utility)
+        return maxVal
+
+    def checkkeyThreeLetters(self,node):
+        '''
+
+        '''
+        if all([k in list(node.letter.keys()) for k in list('MCKL') ]):
+                 if node.letter['M'] == 'I':
+                    if node.letter['C'] == 'A':
+                        if node.letter['K'] == 'S':
+                            if node.letter['L'] == 'N':
+                                print("Key {} :: Utility of {}  present in the puzzle".format(node.letter,round(node.utility,3)))
+                                return True
+        # Leaving the system stack and not finding what we were
+        return False
+
+   
+
+
+
+
+
+
 if __name__ == '__main__':
     unittest.main()

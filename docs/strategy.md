@@ -1,6 +1,6 @@
 ## The Strategy
 
-After some initial work, its apparent that many strategies are needed to solve a cryptogram.  Some of these will be detailed here. 
+After some initial work, its apparent that many strategies are needed to solve a cryptogram.  The following is the general approach used. 
 
 ## First Steps
 1. If there are one letter words, then A or I or both.

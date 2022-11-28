@@ -49,8 +49,9 @@ class TestPz1(unittest.TestCase):
         '''
         agent = Agent(puzzle=self.puzzle)
         agent.startPuzzle()
+        agent.VERBOSE = False
         self.assertEqual(0.0, agent.root.utility)
-        
+        print("Puzzle 1 -- Test 1 -- Make Initial Guess")
         if not agent.puzzle.bothAandI():
             for ltr in ['A','I']:
                 agent.assignAorI(agent.root, ltr)
@@ -63,13 +64,13 @@ class TestPz1(unittest.TestCase):
          
     def testPz1_2_TwoLetterWords(self):
         '''
-        This tries other two letter words but its not useful
-        becasue pz2's only two letter words begin with I (IS, IN)
+        This tries other two letter words
         '''
         agent = Agent(puzzle=self.puzzle)
+        agent.VERBOSE = False
         agent.startPuzzle()
         self.assertEqual(0.0, agent.root.utility)
-        
+        print("Puzzle 1 -- Test 2 -- Two Letter Words")
         if not agent.puzzle.bothAandI():
             for ltr in ['A','I']:
                 agent.assignAorI(agent.root, ltr)
@@ -79,23 +80,20 @@ class TestPz1(unittest.TestCase):
         agent.twoLtWdsBeginWithAorI()  
         for child in agent.root.children:
             self.assertTrue(child.utility >= agent.root.utility)
-
         startTime = time()
         if agent.puzzle.wordsOfLength(2):
             startTime = time()
             for child in agent.root.children:
                 agent.processTwoLetterWords(child,0,5)
-                
-
             endTime = time()
             elapsed = endTime - startTime
             elapsedTwo = str(timedelta(seconds=elapsed))
-            print("Execution time for two letter words is {}".format(elapsedTwo))  
-
-            if self.evaluateChildrenForKey(agent.root, False):
-                self.assertTrue(1==1)
+            print("Puzzle 1 -- test 2 -- Execution time for two letter words is {}".format(elapsedTwo))  
             maxVal = max(self.getHighestUtility(agent.root,[]))
-            print("Maximum Utility in this possible solution is {}".format(maxVal))
+            print("Puzzle 1 -- test 2 -- Maximum Utility is {}".format(round(maxVal,3)))
+            print("Puzzle 1 -- test 2 -- Node Count at {}".format(agent.node_count))
+            self.evaluateChildrenForKey(agent.root, False)
+            self.evaluateChildrenForKeyThree(agent.root,returnValue =False)
 
     def evaluateChildrenForKey(self,node,returnValue):
         '''
@@ -105,25 +103,49 @@ class TestPz1(unittest.TestCase):
             for child in node.children:
                 self.evaluateChildrenForKey(child,returnValue)
         else:
-            if self.checkkeyTwoLetters(node):
-                returnValue = True
-            else:
-                returnValue = False
+           returnValue = self.checkkeyTwoLetters(node)
         return returnValue
+
+    def evaluateChildrenForKeyThree(self,node,returnValue):
+        '''
+        Helper function for the tests 
+        '''
+        if len(node.children) > 0: 
+            for child in node.children:
+                self.evaluateChildrenForKeyThree(child,returnValue)
+        else:
+           returnValue = self.checkkeyMoreLetters(node)
+        return returnValue       
 
     def checkkeyTwoLetters(self,node):
         '''
         Helper function for the tests
         '''
+        returnVal = False
         if all([k in list(node.letter.keys()) for k in list('XCKG') ]):
                 if node.letter['X'] == 'A':
                     if node.letter['C'] == 'I':
                         if node.letter['K'] == 'T':
                             if node.letter['G'] == 'O':
-                                print("Key {} :: Utility of {}  present in the puzzle".format(node.letter,round(node.utility,3)))
-                                return True
+                                print("\n\tKey {} :: \n\tUtility of {} present in the puzzle".format(node.letter,round(node.utility,3)))
         # Leaving the system stack and not finding what we were
-        return False
+        return returnVal
+
+    def checkkeyMoreLetters(self,node):
+        '''
+        Helper function for the tests
+        '''
+        returnVal = False
+        if all([k in list(node.letter.keys()) for k in list('XCKGQM') ]):
+                if node.letter['X'] == 'A':
+                    if node.letter['C'] == 'I':
+                        if node.letter['K'] == 'T':
+                            if node.letter['G'] == 'O':
+                                if node.letter['Q'] == 'M':
+                                    if node.letter['M'] == 'E':
+                                        print("\n\tBigger Key {} :: \n\tUtility of {}  present in the puzzle".format(node.letter,round(node.utility,3)))
+        # Leaving the system stack and not finding what we were
+        return returnVal
 
     def getHighestUtility(self,node,maxVal=[]):
         '''
@@ -135,6 +157,6 @@ class TestPz1(unittest.TestCase):
         else:
             maxVal.append(node.utility)
         return maxVal
-            
+
 if __name__ == '__main__':
     unittest.main()

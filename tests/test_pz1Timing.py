@@ -4,7 +4,11 @@ Reasoning Under Uncertainty
 EN.605.745
 
 
-Tests For Reynard
+Tests For Reynard -- this one is used to get metrics
+on Node counts, amount of time and Utility achieved.
+
+
+
 '''
 import sys,os
 

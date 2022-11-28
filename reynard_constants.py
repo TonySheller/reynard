@@ -1,6 +1,8 @@
 '''
 Reynard is an agent that uses reasoning to solve cryptograms. 
 
+These are the constants that are used within Reynard
+
 Anthony Sheller
 Reasoning Under Uncertainty
 EN.605.745

@@ -116,7 +116,6 @@ class Puzzle:
                 wds[wd] += 1
         return len(wds.keys())
 
-
     def wordLengthsFrequency(self):
         '''
         Method to get a frequency count of word lengths
@@ -222,7 +221,7 @@ class Puzzle:
 
 def main():
     '''
-    Run this as needed for evaluation 
+    For Evaluation
     '''
     reynard = Puzzle('data/pz1.txt')
     
