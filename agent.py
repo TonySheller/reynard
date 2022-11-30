@@ -2,10 +2,9 @@
 Anthony Sheller
 Reasoning Under Uncertainty
 EN.605.745
-This python module will create an agent.
+This Python module will create an agent.
 
-The agent is being constructed in a separate module for 
-compactness and separation of concerns (agent from data)
+The agent Python Module of Reynard
 '''
 
 from copy import deepcopy, copy
@@ -30,7 +29,7 @@ import json
 
 MAX_NODE_COUNT = 500
 VALIDATE = False
-VERBOSE = True
+VERBOSE = False
 
 
 class Agent:
@@ -81,8 +80,11 @@ class Agent:
         '''
         tree = deepcopy(node)
         tree.children =[]
-    
-        current_idx = list(node.key.keys())[list(node.key.values()).index(toLt)]
+        if toLt not in tree.key.values():
+            ## Swap out least used key
+            tree.swapFor(self.puzzle.pz_letter_frequency,toLt)
+            
+        current_idx = list(tree.key.keys())[list(tree.key.values()).index(toLt)]
         
         other_value = node.key[fmLt]
         tree.pz_key_used.append(fmLt)
@@ -141,7 +143,7 @@ class Agent:
             del tode.children
             tode.children = []
             tode.parent = node
-            swapKeys = tode.gameCharForWord(puzz_wd,real_wd)
+            swapKeys = tode.gameCharForWord(self.puzzle.pz_letter_frequency,puzz_wd,real_wd)
             if VALIDATE:
                 if not tode.checkValidkey():
                     print("Validation Failed -- something is wrong")
@@ -373,6 +375,7 @@ class Agent:
             children = []
             self.node_count = 0
             for i in range(self.puzzle.uniqueWordsThisLength(2)):
+                #startTime = time()
                 if len(node.children) > 0:
                     filter = self.getAvgChildUtility(node,[])
                 else:
@@ -392,7 +395,10 @@ class Agent:
                     item.parent = newRoot
                     newRoot.children.append(item)
                     self.node_count += 1
-
+                
+                #elapsed = time() - startTime
+                #elapsedThree = str(timedelta(seconds=elapsed))
+                #print("\n\n TIME ELAPSED IS {} ".format(elapsedThree))
             node.children = newRoot.children
 
     def processThreeLetterWords(self,node,start_idx,end_idx):
@@ -423,6 +429,78 @@ class Agent:
 
             node.children = newRoot.children
 
+    def evaluateChildrenForKey(self,node,returnValue):
+        '''
+        Helper function for the tests 
+        '''
+        if len(node.children) > 0: 
+            for child in node.children:
+                self.evaluateChildrenForKey(child,returnValue)
+        else:
+           returnValue = self.checkkeyTwoLetters(node)
+        return returnValue
+
+    def evaluateChildrenForKeyThree(self,node,returnValue):
+        '''
+        Helper function for the tests 
+        '''
+        if len(node.children) > 0: 
+            for child in node.children:
+                self.evaluateChildrenForKeyThree(child,returnValue)
+        else:
+           returnValue = self.checkkeyMoreLetters(node)
+        return returnValue       
+
+    def checkkeyTwoLetters(self,node):
+        '''
+        Helper function for the tests
+        '''
+        returnVal = False
+        if all([k in list(node.letter.keys()) for k in list('XCKG') ]):
+                if node.letter['X'] == 'A':
+                    if node.letter['C'] == 'I':
+                        if node.letter['K'] == 'T':
+                            if node.letter['G'] == 'O':
+                                print("\n\tKey {} :: \n\tUtility of {} present in the puzzle".format(node.letter,round(node.utility,3)))
+                                agent.showProgressPuzzle(node)
+        # Leaving the system stack and not finding what we were
+        return returnVal
+
+    def checkkeyMoreLetters(self,node):
+        '''
+        Helper function for the tests
+        '''
+        returnVal = False
+        if all([k in list(node.letter.keys()) for k in list('XCKGQM') ]):
+                if node.letter['X'] == 'A':
+                    if node.letter['C'] == 'I':
+                        if node.letter['K'] == 'T':
+                            if node.letter['G'] == 'O':
+                                if node.letter['Q'] == 'M':
+                                    if node.letter['M'] == 'E':
+                                        print("\n\tBigger Key {} :: \n\tUtility of {}  present in the puzzle".format(node.letter,round(node.utility,3)))
+                                        agent.showProgressPuzzle(node)
+        # Leaving the system stack and not finding what we were
+        return returnVal
+
+    def getHighestUtility(self,node,maxVal=[]):
+        '''
+        What is the highest utility in the tree
+        '''
+        if len(node.children) > 0: 
+            for child in node.children:
+                self.getHighestUtility(child,maxVal)    
+        else:
+            maxVal.append(node.utility)
+        return maxVal
+
+    def showProgressPuzzle(self,node):
+        gpuz = ''.join(node.game_state).split('\n')
+        puzz = ''.join(self.puzzle.pz_array).split('\n')
+        for i in range(len(gpuz)):
+            print(gpuz[i])
+            print(puzz[i])
+
 if __name__ == "__main__":
     
     puzzle = Puzzle('data/pz1.txt')
@@ -451,8 +529,12 @@ if __name__ == "__main__":
         endTime = time()
         elapsed = endTime - startTime
         elapsedTwo = str(timedelta(seconds=elapsed))
-        print("Execution time for two letter words is {}".format(elapsedTwo))   
-
+        print("Puzzle 1 -- Execution time for two letter words is {}".format(elapsedTwo))  
+        maxVal = max(agent.getHighestUtility(agent.root,[]))
+        print("Puzzle 1 -- Maximum Utility is {}".format(round(maxVal,3)))
+        print("Puzzle 1  -- Node Count at {}".format(agent.node_count))
+        agent.evaluateChildrenForKey(agent.root, False)
+        agent.evaluateChildrenForKeyThree(agent.root,returnValue =False)
 
     if agent.puzzle.wordsOfLength(3):
         startTime = time()
@@ -463,5 +545,10 @@ if __name__ == "__main__":
         endTime = time()
         elapsed = endTime - startTime
         elapsedTwo = str(timedelta(seconds=elapsed))
-        print("Execution time for three letter words is {}".format(elapsedTwo))       
+        print("Puzzle 1 -- Execution time for three letter words is {}".format(elapsedTwo))  
+        maxVal = max(agent.getHighestUtility(agent.root,[]))
+        print("Puzzle 1 -- Maximum Utility is {}".format(round(maxVal,3)))
+        print("Puzzle 1  -- Node Count at {}".format(agent.node_count))
+        agent.evaluateChildrenForKey(agent.root, False)
+        agent.evaluateChildrenForKeyThree(agent.root,returnValue =False)      
     print("")

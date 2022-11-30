@@ -73,43 +73,7 @@ class TestPz3(unittest.TestCase):
         agent.twoLtWdsBeginWithAorI()
         for child in agent.root.children:
             self.assertTrue(len(child.children)>= 0)
-                                
-    def testPz3_3_TwoLetterWords(self):
-        '''
-        This tries other two letter words but its not useful
-        becasue pz3's 
-
-        PZ3 Has No 2 letter words
-        '''
-        
-        agent = Agent(puzzle=self.puzzle)
-        agent.startPuzzle()
-        self.assertEqual(0.0, agent.root.utility)
-        
-        if not agent.puzzle.bothAandI():
-            for ltr in ['A','I']:
-                agent.assignAorI(agent.root, ltr)
-        else:
-            agent.assignAorI(agent.root, ['A','I'])
-        self.assertEqual(len(agent.root.children),2)
-        agent.twoLtWdsBeginWithAorI()  
-        for child in agent.root.children:
-            self.assertTrue(child.utility >= agent.root.utility)
-        startTime = time()
-        if agent.puzzle.wordsOfLength(2):
-            startTime = time()
-            for child in agent.root.children:
-                agent.processTwoLetterWords(child,0,5)
-            endTime = time()
-            elapsed = endTime - startTime
-            elapsedTwo = str(timedelta(seconds=elapsed))
-            print("Puzzle 2 -- test 4 -- Execution time for Two letter words is {}".format(elapsedTwo))  
-            maxVal = max(self.getHighestUtility(agent.root,[]))
-            print("Puzzle 2 -- test 4 -- Maximum Utility is {}".format(round(maxVal,3)))
-            print("Puzzle 2 -- test 4 -- Node Count at {}".format(agent.node_count))
-            self.evaluateChildrenForKey(agent.root, False)
-            self.evaluateChildrenForKeyThree(agent.root,returnValue =False)
-        
+ 
     def testPz3_4_ThreeLetterWords(self):
         '''
         '''
@@ -117,6 +81,7 @@ class TestPz3(unittest.TestCase):
         agent = Agent(puzzle=self.puzzle)
         agent.startPuzzle()
         agent.VERBOSE = False
+        self.agent = agent
         self.assertEqual(0.0, agent.root.utility)
         print("Puzzle 4 -- Test 4 -- Three Letter Words")
         if not agent.puzzle.bothAandI():
@@ -133,7 +98,7 @@ class TestPz3(unittest.TestCase):
         if agent.puzzle.wordsOfLength(2):
             startTime = time()
             for child in agent.root.children:
-                agent.processTwoLetterWords(child,0,5)
+                agent.processTwoLetterWords(child,0,8)
             endTime = time()
             elapsed = endTime - startTime
             elapsedTwo = str(timedelta(seconds=elapsed))
@@ -159,29 +124,6 @@ class TestPz3(unittest.TestCase):
             self.evaluateChildrenForKey(agent.root, False)
             self.evaluateChildrenForKeyThree(agent.root,returnValue =False) 
 
- 
-        '''
-        What is the highest utility in the tree
-        '''
-        if len(node.children) > 0: 
-            for child in node.children:
-                self.getHighestUtility(child,maxVal)    
-        else:
-            maxVal.append(node.utility)
-        return maxVal
-
-        '''
-
-        '''
-        if all([k in list(node.letter.keys()) for k in list('MCKL') ]):
-                 if node.letter['M'] == 'I':
-                    if node.letter['C'] == 'A':
-                        if node.letter['K'] == 'S':
-                            if node.letter['L'] == 'N':
-                                print("Key {} :: Utility of {}  present in the puzzle".format(node.letter,round(node.utility,3)))
-                                return True
-        # Leaving the system stack and not finding what we were
-        return False
 
     def evaluateChildrenForKey(self,node,returnValue):
         '''
@@ -213,13 +155,13 @@ class TestPz3(unittest.TestCase):
         '''
         Helper function for the tests
         '''
-        if all([k in list(node.letter.keys()) for k in list('MCKL') ]):
-                if node.letter['M'] == 'I':
-                    if node.letter['C'] == 'A':
-                        if node.letter['K'] == 'S':
-                            if node.letter['L'] == 'N':
+        if all([k in list(node.letter.keys()) for k in list('TQHE') ]):
+                if node.letter['T'] == 'I':
+                    if node.letter['Q'] == 'T':
+                        if node.letter['H'] == 'O':
+                            if node.letter['E'] == 'D':
                                 print("Key {} :: Utility of {}  present in the puzzle".format(node.letter,round(node.utility,3)))
-                                return True
+                                self.agent.showProgressPuzzle(node)
         # Leaving the system stack and not finding what we were
         return False
 
@@ -238,22 +180,15 @@ class TestPz3(unittest.TestCase):
         '''
 
         '''
-        if all([k in list(node.letter.keys()) for k in list('MCKL') ]):
-                 if node.letter['M'] == 'I':
-                    if node.letter['C'] == 'A':
-                        if node.letter['K'] == 'S':
-                            if node.letter['L'] == 'N':
+        if all([k in list(node.letter.keys()) for k in list('TQHE') ]):
+                 if node.letter['T'] == 'I':
+                    if node.letter['Q'] == 'T':
+                        if node.letter['H'] == 'O':
+                            if node.letter['E'] == 'D':
                                 print("Key {} :: Utility of {}  present in the puzzle".format(node.letter,round(node.utility,3)))
-                                return True
+                                self.agent.showProgressPuzzle(node)
         # Leaving the system stack and not finding what we were
         return False
-
-   
-
-
-
-
-
 
 if __name__ == '__main__':
     unittest.main()

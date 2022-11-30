@@ -116,6 +116,7 @@ class TestPz2(unittest.TestCase):
         agent = Agent(puzzle=self.puzzle)
         if agent.VERBOSE:
             agent.VERBOSE = False
+        self.agent = agent
         agent.startPuzzle()
         print("Puzzle 2 -- Test 4 -- Three Letter Words")
         self.assertEqual(0.0, agent.root.utility)
@@ -159,6 +160,7 @@ class TestPz2(unittest.TestCase):
             print("Puzzle 2 -- test 4 -- Node Count at {}".format(agent.node_count))
             self.evaluateChildrenForKey(agent.root, False)
             self.evaluateChildrenForKeyThree(agent.root,returnValue =False)
+            print("pause")
 
     def evaluateChildrenForKey(self,node,returnValue):
         '''
@@ -192,7 +194,7 @@ class TestPz2(unittest.TestCase):
                         if node.letter['K'] == 'S':
                             if node.letter['L'] == 'N':
                                 print("Key {} :: Utility of {}  present in the puzzle".format(node.letter,round(node.utility,3)))
-                                return True
+                                self.agent.showProgressPuzzle(node)
         # Leaving the system stack and not finding what we were
         return False
 
@@ -217,11 +219,9 @@ class TestPz2(unittest.TestCase):
                         if node.letter['K'] == 'S':
                             if node.letter['L'] == 'N':
                                 print("Bigger Key {} :: Utility of {}  present in the puzzle".format(node.letter,round(node.utility,3)))
-                                return True
+                                self.agent.showProgressPuzzle(node)
         # Leaving the system stack and not finding what we were
         return False
-
-   
-            
+           
 if __name__ == '__main__':
     unittest.main()

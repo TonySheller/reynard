@@ -30,8 +30,6 @@ class TestSetPz1Solution(unittest.TestCase):
     '''
 
     '''
-    
-
     def readSolution(self,solFile):
         '''
         Method to read in the puzzle provided at the command line
@@ -50,9 +48,7 @@ class TestSetPz1Solution(unittest.TestCase):
             self.solution = temp
             for char in self.solution_as_string:
                 self.solution_array.append(char)
-
-
-        
+   
     def testpz1(self):
         '''
         
@@ -120,7 +116,6 @@ class TestSetPz1Solution(unittest.TestCase):
         if False in wordTruth:
             self.assertTrue(1==2)
 
-
     def testpz4(self):
         '''
         
@@ -183,8 +178,7 @@ class TestSetPz1Solution(unittest.TestCase):
                 pass
         if False in wordTruth:
             self.assertTrue(1==2)
-            
-            
+                   
     def testpz7(self):
         self.readSolution(FILE_PATH + '/data/solutions/sol7.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
@@ -263,9 +257,7 @@ class TestSetPz1Solution(unittest.TestCase):
             
         if False in wordTruth:
             self.assertTrue(1==2)
-            
-            
-            
+                        
     def testpz11(self):
         self.readSolution(FILE_PATH + '/data/solutions/sol11.txt')
         self.tokenizer = RegexpTokenizer(r"[\w']+") ## The \w' will leave in the apostrophe
@@ -284,7 +276,6 @@ class TestSetPz1Solution(unittest.TestCase):
                 pass
         if False in wordTruth:
             self.assertTrue(1==2)
-
 
     def testpz12(self):
         self.readSolution(FILE_PATH + '/data/solutions/sol12.txt')
@@ -364,7 +355,6 @@ class TestSetPz1Solution(unittest.TestCase):
                 pass
         if False in wordTruth:
             self.assertTrue(1==2)
-
 
     def testpz19(self):
         self.readSolution(FILE_PATH + '/data/solutions/sol19.txt')

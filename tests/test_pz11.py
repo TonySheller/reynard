@@ -43,7 +43,7 @@ class TestPz11(unittest.TestCase):
         For puzzle 10 I and A are both in the phrase.
         '''
         agent = Agent(puzzle=self.puzzle)
-        agent.makeInitialGuess()
+        agent.startPuzzle()
         self.assertGreaterEqual(agent.root.utility,0.0 )
         # 
         if not agent.puzzle.bothAandI():
@@ -59,7 +59,7 @@ class TestPz11(unittest.TestCase):
         For puzzle 10 I and A are both in the phrase.
         '''
         agent = Agent(puzzle=self.puzzle)
-        agent.makeInitialGuess()
+        agent.startPuzzle()
         self.assertGreaterEqual(agent.root.utility,0.0 )
         # 
         if not agent.puzzle.bothAandI():

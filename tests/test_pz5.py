@@ -16,8 +16,11 @@ import math
 from reynard_constants import *
 from agent import Agent
 from puzzle import Puzzle
-import threading
+
 from itertools import combinations, permutations
+from time import time,sleep
+from datetime import timedelta
+
 
 FILE_PATH = '../reynard'
 class TestPz5(unittest.TestCase):
@@ -37,12 +40,14 @@ class TestPz5(unittest.TestCase):
         del(self.puzzle)
 
         
-    def testPz5MakeInitialGuess(self):
+    def testPz5_1_MakeInitialGuess(self):
         '''
         For puzzle 5 we start with a correct guess of 0.07894
         '''
+        print("Puzzle 5")
+        print("Puzzle")
         agent = Agent(puzzle=self.puzzle)
-        agent.makeInitialGuess()
+        agent.startPuzzle()
         self.assertGreaterEqual(agent.root.utility,0.0 )
         # 
         if not agent.puzzle.bothAandI():
@@ -52,12 +57,12 @@ class TestPz5(unittest.TestCase):
             agent.assignAorI(agent.root, ['A','I'])
         self.assertEqual(len(agent.root.children),2)
 
-    def testPz5TwoLtWordBeginsWithAorI(self):
+    def testPz5_2_TwoLtWordBeginsWithAorI(self):
         '''
         For puzzle 5 we start with a correct guess of 0.07894
         '''
         agent = Agent(puzzle=self.puzzle)
-        agent.makeInitialGuess()
+        agent.startPuzzle()
         #self.assertGreaterEqual(agent.root.utility,0.0 )
         # 
         if not agent.puzzle.bothAandI():
@@ -70,28 +75,119 @@ class TestPz5(unittest.TestCase):
         for child in agent.root.children:
             self.assertTrue(len(child.children)> 0)
 
-           
-    def testPz5OtherTwoLetterWords(self):
+         
+    def testPz1_2_TwoLetterWords(self):
+        '''
+        This tries other two letter words
+        '''
         agent = Agent(puzzle=self.puzzle)
-        agent.makeInitialGuess()
-        self.assertGreaterEqual(agent.root.utility,0.0)
-        
+        agent.VERBOSE = True
+        self.agent = agent
+        agent.startPuzzle()
+        self.assertEqual(0.0, agent.root.utility)
+        print("Puzzle 5 -- Test 2 -- Two Letter Words")
         if not agent.puzzle.bothAandI():
             for ltr in ['A','I']:
                 agent.assignAorI(agent.root, ltr)
         else:
             agent.assignAorI(agent.root, ['A','I'])
-        self.assertEqual(len(agent.root.children),2)  
+        self.assertEqual(len(agent.root.children),2)
+        agent.twoLtWdsBeginWithAorI()  
         for child in agent.root.children:
             self.assertTrue(child.utility >= agent.root.utility)
-        
-        agent.twoLtWdsBeginWithAorI()
-        iter = agent.puzzle.pz_word_lengths_freqeuncy[2]
-        for i in range(iter):
-            agent.recurseDownTryTwoLtWds(agent.root, two_letter_word_frequency)
-            print("Pause first")
-                
-        print("pause")     
+        startTime = time()
+        if agent.puzzle.wordsOfLength(2):
+            startTime = time()
+            for child in agent.root.children:
+                agent.processTwoLetterWords(child,0,5)
+            endTime = time()
+            elapsed = endTime - startTime
+            elapsedTwo = str(timedelta(seconds=elapsed))
+            print("Puzzle 1 -- test 2 -- Execution time for two letter words is {}".format(elapsedTwo))  
+            maxVal = max(self.getHighestUtility(agent.root,[]))
+            print("Puzzle 1 -- test 2 -- Maximum Utility is {}".format(round(maxVal,3)))
+            print("Puzzle 1 -- test 2 -- Node Count at {}".format(agent.node_count))
+            self.evaluateChildrenForKey(agent.root, False)
+            self.evaluateChildrenForKeyThree(agent.root,returnValue =False)
+
+        if agent.puzzle.wordsOfLength(3):
+            startTime = time()
+            for child in agent.root.children:
+                agent.processThreeLetterWords(child,0,5)
+            endTime = time()
+            elapsed = endTime - startTime
+            elapsedThree = str(timedelta(seconds=elapsed))
+            print("Puzzle 3 -- test 4 -- Execution time for Three letter words is {}".format(elapsedTwo))  
+            maxVal = max(self.getHighestUtility(agent.root,[]))
+            print("Puzzle 3 -- test 4 -- Maximum Utility is {}".format(round(maxVal,3)))
+            print("Puzzle 3 -- test 4 -- Node Count at {}".format(agent.node_count))
+            self.evaluateChildrenForKey(agent.root, False)
+            self.evaluateChildrenForKeyThree(agent.root,returnValue =False) 
+
+
+
+
+    def evaluateChildrenForKey(self,node,returnValue):
+        '''
+        Helper function for the tests 
+        '''
+        if len(node.children) > 0: 
+            for child in node.children:
+                self.evaluateChildrenForKey(child,returnValue)
+        else:
+           returnValue = self.checkkeyTwoLetters(node)
+        return returnValue
+
+    def evaluateChildrenForKeyThree(self,node,returnValue):
+        '''
+        Helper function for the tests 
+        '''
+        if len(node.children) > 0: 
+            for child in node.children:
+                self.evaluateChildrenForKeyThree(child,returnValue)
+        else:
+           returnValue = self.checkkeyMoreLetters(node)
+        return returnValue       
+
+    def checkkeyTwoLetters(self,node):
+        '''
+        Helper function for the tests
+        '''
+        returnVal = False
+        if all([k in list(node.letter.keys()) for k in list('CG') ]):
+
+            if node.letter['C'] == 'I':
+                if node.letter['G'] == 'T':
+                    print("\n\tKey {} :: \n\tUtility of {} present in the puzzle\n".format(node.letter,round(node.utility,3)))
+                    self.agent.showProgressPuzzle(node)
+        # Leaving the system stack and not finding what we want
+        return returnVal
+
+    def checkkeyMoreLetters(self,node):
+        '''
+        Helper function for the tests
+        '''
+        returnVal = False
+        if all([k in list(node.letter.keys()) for k in list('CGRM') ]):
+            if node.letter['C'] == 'I':
+                if node.letter['G'] == 'T':
+                    if node.letter['R'] == 'A':
+                        if node.letter['M'] == 'N':
+                            print("\n\tKey {} :: \n\tUtility of {} present in the puzzle\n".format(node.letter,round(node.utility,3)))
+                            self.agent.showProgressPuzzle(node)
+        # Leaving the system stack and not finding what we were
+        return returnVal
+
+    def getHighestUtility(self,node,maxVal=[]):
+        '''
+        What is the highest utility in the tree
+        '''
+        if len(node.children) > 0: 
+            for child in node.children:
+                self.getHighestUtility(child,maxVal)    
+        else:
+            maxVal.append(node.utility)
+        return maxVal
 
 
 if __name__ == '__main__':

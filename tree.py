@@ -101,19 +101,31 @@ class Tree:
                     charLst.append(char)
         return choice(charLst)
 
+
+    def swapFor(self,freq_tbl,ltr):
+        i = -1
+        while True:
+            lst_ltr = list(freq_tbl.keys())[i]
+            ltr_val = self.key[lst_ltr]
+            if ltr not in list(self.letter.keys()) and lst_ltr != ltr:
+                self.key[lst_ltr] = ltr
+                break
+            i -= 1
+                
+
     def ltrsused(self):
 
         return list(set([ch for ch in self.game_state if ch in ascii_uppercase ]))
 
-    def lettersNotInKey(self):
-        '''
-        Return letters not in key 
-        When a puzzle doesn't use all the keys we need to be swap them in and out
-        This is not useful
-        '''
-        return [letter for letter in ascii_uppercase if letter not in self.key.keys()]      
+    #def lettersNotInKey(self):
+    #    '''
+    #    Return letters not in key 
+    #    When a puzzle doesn't use all the keys we need to be swap them in and out
+    #    This is not useful
+    #    '''
+    #    return [letter for letter in ascii_uppercase if letter not in self.key.keys()]      
 
-    def gameCharForWord(self,puzz_wd,real_wd):
+    def gameCharForWord(self,freq_pz,puzz_wd,real_wd):
         '''
         Given these two words, return the keys for real_wd
         '''
@@ -124,10 +136,8 @@ class Tree:
             else:
                 # Note that some letters may not be used in the puzzle so need to add it 
                 # when we can.  It may be important - Real Word Letters that is
-
-                t_key = self.gameCharForWord()
-                self.key[t_key] = char
-                charLst.append(t_key)
+                self.swapFor(freq_pz,char)
+                charLst.append(list(self.key.keys())[list(self.key.values()).index(char)])
         return charLst
 
     def setState(self,puzzle):
