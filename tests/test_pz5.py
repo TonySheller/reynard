@@ -48,6 +48,7 @@ class TestPz5(unittest.TestCase):
         print("Puzzle")
         agent = Agent(puzzle=self.puzzle)
         agent.startPuzzle()
+        agent.VERBOSE= False
         self.assertGreaterEqual(agent.root.utility,0.0 )
         # 
         if not agent.puzzle.bothAandI():
@@ -103,26 +104,27 @@ class TestPz5(unittest.TestCase):
             endTime = time()
             elapsed = endTime - startTime
             elapsedTwo = str(timedelta(seconds=elapsed))
-            print("Puzzle 1 -- test 2 -- Execution time for two letter words is {}".format(elapsedTwo))  
+            print("Puzzle 5 -- test 2 -- Execution time for two letter words is {}".format(elapsedTwo))  
             maxVal = max(self.getHighestUtility(agent.root,[]))
-            print("Puzzle 1 -- test 2 -- Maximum Utility is {}".format(round(maxVal,3)))
-            print("Puzzle 1 -- test 2 -- Node Count at {}".format(agent.node_count))
+            print("Puzzle 5 -- test 2 -- Maximum Utility is {}".format(round(maxVal,3)))
+            print("Puzzle 5 -- test 2 -- Node Count at {}".format(agent.node_count))
             self.evaluateChildrenForKey(agent.root, False)
             self.evaluateChildrenForKeyThree(agent.root,returnValue =False)
+
 
         if agent.puzzle.wordsOfLength(3):
             startTime = time()
             for child in agent.root.children:
-                agent.processThreeLetterWords(child,0,5)
+                agent.processThreeLetterWords(child,0,6)
             endTime = time()
             elapsed = endTime - startTime
             elapsedThree = str(timedelta(seconds=elapsed))
-            print("Puzzle 3 -- test 4 -- Execution time for Three letter words is {}".format(elapsedTwo))  
+            print("Puzzle 5 -- test 4 -- Execution time for Three letter words is {}".format(elapsedThree))  
             maxVal = max(self.getHighestUtility(agent.root,[]))
-            print("Puzzle 3 -- test 4 -- Maximum Utility is {}".format(round(maxVal,3)))
-            print("Puzzle 3 -- test 4 -- Node Count at {}".format(agent.node_count))
+            print("Puzzle 5 -- test 4 -- Maximum Utility is {}".format(round(maxVal,3)))
+            print("Puzzle 5 -- test 4 -- Node Count at {}".format(agent.node_count))
             self.evaluateChildrenForKey(agent.root, False)
-            self.evaluateChildrenForKeyThree(agent.root,returnValue =False) 
+            self.evaluateChildrenForKeyThree(agent.root,returnValue =False)
 
 
 

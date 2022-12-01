@@ -65,6 +65,7 @@ class TestPz4(unittest.TestCase):
     def testPz4_2_WordsBeginWithAorI(self):
         agent = Agent(puzzle=self.puzzle)
         agent.startPuzzle()
+        agent.VERBOSE = True
         self.assertGreaterEqual(agent.root.utility,0.0)
         if not agent.puzzle.bothAandI():
             for ltr in ['A','I']:
@@ -81,12 +82,12 @@ class TestPz4(unittest.TestCase):
         '''
         Test to evaluate three letter words
         '''
-        
+        print("Puzzle 4 -- Test 4 -- Two and Three Letter Words")
         agent = Agent(puzzle=self.puzzle)
         agent.startPuzzle()
         self.assertEqual(0.0, agent.root.utility)
         self.agent = agent
-        agent.VERBOSE = False
+        agent.VERBOSE = True
         if not agent.puzzle.bothAandI():
             for ltr in ['A','I']:
                 agent.assignAorI(agent.root, ltr)
@@ -98,7 +99,7 @@ class TestPz4(unittest.TestCase):
             self.assertTrue(child.utility >= agent.root.utility)
 
         startTime = time()
-        if agent.puzzle.wordsOfLength(2):
+        if agent.puzzle.wordsOfLength(200):
             startTime = time()
             if len(agent.root.children) == 0:
                 agent.processTwoLetterWords(agent.root,0,14)
@@ -114,18 +115,19 @@ class TestPz4(unittest.TestCase):
             self.evaluateChildrenForKeyThree(agent.root,returnValue =False) 
         if agent.puzzle.wordsOfLength(3):
             startTime = time()
-            agent.processThreeLetterWords(agent.root, 0, 7)
+            agent.processThreeLetterWords(agent.root, 0, 5)
  
 
             endTime = time()
             elapsed = endTime - startTime
             elapsedThree = str(timedelta(seconds=elapsed))
-            print("Puzzle 4 -- Execution time for three letter words is {}".format(elapsedTwo))  
+            print("Puzzle 4 -- Execution time for three letter words is {}".format(elapsedThree))  
             maxVal = max(self.getHighestUtility(agent.root,[]))
             print("Puzzle 4 -- Maximum Utility is {}".format(round(maxVal,3)))
             print("Puzzle 4  -- Node Count at {}".format(agent.node_count))
             self.evaluateChildrenForKey(agent.root, False)
             self.evaluateChildrenForKeyThree(agent.root,returnValue =False)
+            print("pause")
 
 
     def evaluateChildrenForKey(self,node,returnValue):
@@ -155,12 +157,16 @@ class TestPz4(unittest.TestCase):
         Helper function for the tests
         '''
         returnVal = False
-        if all([k in list(node.letter.keys()) for k in list('CLMXE') ]):
+        if all([k in list(node.letter.keys()) for k in list('MPLFUW') ]):
 
             if node.letter['M'] == 'T':
-                if node.letter['X'] == 'O':
-                    print("\n\tKey {} :: \n\tUtility of {} present in the puzzle\n".format(node.letter,round(node.utility,3)))
-                    self.agent.showProgressPuzzle(node)
+                if node.letter['P'] == 'H':
+                    if node.letter['L'] == 'E':
+                        if node.letter['F'] == 'A':
+                            if node.letter['U'] == 'N':
+                                if node.letter['W'] == 'D':
+                                    print("\n\tKey {} :: \n\tUtility of {} present in the puzzle\n".format(node.letter,round(node.utility,3)))
+                                    self.agent.showProgressPuzzle(node)
         # Leaving the system stack and not finding what we want
         return returnVal
 
@@ -169,14 +175,19 @@ class TestPz4(unittest.TestCase):
         Helper function for the tests
         '''
         returnVal = False
-        if all([k in list(node.letter.keys()) for k in list('MXPL') ]):
+        if all([k in list(node.letter.keys()) for k in list('MPLFUWSY') ]):
+
             if node.letter['M'] == 'T':
-                if node.letter['X'] == 'O':
-                    if node.letter['P'] == 'H':
-                        if node.letter['L'] == 'E':
-                            print("\n\tKey {} :: \n\tUtility of {} present in the puzzle\n".format(node.letter,round(node.utility,3)))
-                            self.agent.showProgressPuzzle(node)
-        # Leaving the system stack and not finding what we were
+                if node.letter['P'] == 'H':
+                    if node.letter['L'] == 'E':
+                        if node.letter['F'] == 'A':
+                            if node.letter['U'] == 'N':
+                                if node.letter['W'] == 'D':
+                                    if node.letter['S'] == 'B':
+                                        if node.letter['Y'] == 'U':
+                                            print("\n\tKey {} :: \n\tUtility of {} present in the puzzle\n".format(node.letter,round(node.utility,3)))
+                                            self.agent.showProgressPuzzle(node)
+        # Leaving the system stack and not finding what we want
         return returnVal
 
     def getHighestUtility(self,node,maxVal=[]):

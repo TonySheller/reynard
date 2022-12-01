@@ -49,6 +49,7 @@ class TestPz1(unittest.TestCase):
         agent = Agent(puzzle=self.puzzle)
         if agent.VERBOSE:
             agent.VERBOSE = False
+        self.agent = agent
         print("Puzzle 1 -- 3 letter word tests")
         agent.startPuzzle()
 
@@ -113,7 +114,7 @@ class TestPz1(unittest.TestCase):
             for child in node.children:
                 self.evaluateChildrenForKeyThree(child,returnValue)
         else:
-           returnValue = self.checkkeyMoreLetters(node)
+           returnValue = self.checkkeyEvenMoreLetters(node)
         return returnValue       
 
     def checkkeyTwoLetters(self,node):
@@ -127,24 +128,10 @@ class TestPz1(unittest.TestCase):
                         if node.letter['K'] == 'T':
                             if node.letter['G'] == 'O':
                                 print("\n\tKey {} :: \n\tUtility of {} present in the puzzle".format(node.letter,round(node.utility,3)))
+                                self.agent.showProgressPuzzle(node)
         # Leaving the system stack and not finding what we were
         return returnVal
 
-    def checkkeyMoreLetters(self,node):
-        '''
-        Helper function for the tests
-        '''
-        returnVal = False
-        if all([k in list(node.letter.keys()) for k in list('XCKGQM') ]):
-                if node.letter['X'] == 'A':
-                    if node.letter['C'] == 'I':
-                        if node.letter['K'] == 'T':
-                            if node.letter['G'] == 'O':
-                                if node.letter['Q'] == 'M':
-                                    if node.letter['M'] == 'E':
-                                        print("\n\tBigger Key {} :: \n\tUtility of {}  present in the puzzle".format(node.letter,round(node.utility,3)))
-        # Leaving the system stack and not finding what we were
-        return returnVal
 
     def checkkeyEvenMoreLetters(self,node):
         '''
@@ -159,6 +146,7 @@ class TestPz1(unittest.TestCase):
                                 if node.letter['Q'] == 'M':
                                     if node.letter['M'] == 'E':
                                         print("\n\tBigger Key {} :: \n\tUtility of {}  present in the puzzle".format(node.letter,round(node.utility,3)))
+                                        self.agent.showProgressPuzzle(node)
         # Leaving the system stack and not finding what we were
         return returnVal
 
