@@ -66,7 +66,7 @@ class TestPz1(unittest.TestCase):
         Puzzle Two Tests
         '''
         agent = Agent(puzzle=self.puzzle)
-        agent.VERBOSE = False
+        agent.VERBOSE = True
         self.agent = agent
         agent.startPuzzle()
         self.assertEqual(0.0, agent.root.utility)

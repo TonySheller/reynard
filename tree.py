@@ -101,7 +101,6 @@ class Tree:
                     charLst.append(char)
         return choice(charLst)
 
-
     def swapFor(self,freq_tbl,ltr):
         i = -1
         while True:
@@ -112,7 +111,6 @@ class Tree:
                 break
             i -= 1
                 
-
     def ltrsused(self):
 
         return list(set([ch for ch in self.game_state if ch in ascii_uppercase ]))

@@ -127,8 +127,6 @@ class TestPz4(unittest.TestCase):
             print("Puzzle 4  -- Node Count at {}".format(agent.node_count))
             self.evaluateChildrenForKey(agent.root, False)
             self.evaluateChildrenForKeyThree(agent.root,returnValue =False)
-            print("pause")
-
 
     def evaluateChildrenForKey(self,node,returnValue):
         '''
@@ -200,9 +198,6 @@ class TestPz4(unittest.TestCase):
         else:
             maxVal.append(node.utility)
         return maxVal
-
-
-
 
 if __name__ == '__main__':
     unittest.main()

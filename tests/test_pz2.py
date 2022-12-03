@@ -82,6 +82,7 @@ class TestPz2(unittest.TestCase):
         agent = Agent(puzzle=self.puzzle)
         agent.VERBOSE = False
         agent.startPuzzle()
+        self.agent = agent
         print("Puzzle 2 -- Test 3 -- Two Letter Words")
         self.assertEqual(0.0, agent.root.utility)
         if not agent.puzzle.bothAandI():

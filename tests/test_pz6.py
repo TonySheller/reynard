@@ -42,7 +42,7 @@ class TestPz6(unittest.TestCase):
         For puzzle 6 there are no one letter words
         '''
         agent = Agent(puzzle=self.puzzle)
-        agent.startPuzzle()()
+        agent.startPuzzle()
         self.assertGreaterEqual(agent.root.utility,0.0 )
         # 
         if not agent.puzzle.bothAandI():

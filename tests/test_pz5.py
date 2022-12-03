@@ -38,8 +38,7 @@ class TestPz5(unittest.TestCase):
         tear down what was setup.
         '''
         del(self.puzzle)
-
-        
+    
     def testPz5_1_MakeInitialGuess(self):
         '''
         For puzzle 5 we start with a correct guess of 0.07894
@@ -75,8 +74,7 @@ class TestPz5(unittest.TestCase):
         agent.twoLtWdsBeginWithAorI()
         for child in agent.root.children:
             self.assertTrue(len(child.children)> 0)
-
-         
+       
     def testPz1_2_TwoLetterWords(self):
         '''
         This tries other two letter words
@@ -110,8 +108,6 @@ class TestPz5(unittest.TestCase):
             print("Puzzle 5 -- test 2 -- Node Count at {}".format(agent.node_count))
             self.evaluateChildrenForKey(agent.root, False)
             self.evaluateChildrenForKeyThree(agent.root,returnValue =False)
-
-
         if agent.puzzle.wordsOfLength(3):
             startTime = time()
             for child in agent.root.children:
@@ -125,9 +121,6 @@ class TestPz5(unittest.TestCase):
             print("Puzzle 5 -- test 4 -- Node Count at {}".format(agent.node_count))
             self.evaluateChildrenForKey(agent.root, False)
             self.evaluateChildrenForKeyThree(agent.root,returnValue =False)
-
-
-
 
     def evaluateChildrenForKey(self,node,returnValue):
         '''
@@ -190,7 +183,6 @@ class TestPz5(unittest.TestCase):
         else:
             maxVal.append(node.utility)
         return maxVal
-
 
 if __name__ == '__main__':
     unittest.main()

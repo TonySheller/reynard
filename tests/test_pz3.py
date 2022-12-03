@@ -124,7 +124,6 @@ class TestPz3(unittest.TestCase):
             self.evaluateChildrenForKey(agent.root, False)
             self.evaluateChildrenForKeyThree(agent.root,returnValue =False) 
 
-
     def evaluateChildrenForKey(self,node,returnValue):
         '''
         Helper function for the tests 
