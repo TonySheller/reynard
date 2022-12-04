@@ -9,7 +9,10 @@ The Bayesian network will be constructed based on the length of words. One canno
 Designing a Bayesian or decision network for this problem turned out to be very challenging. Some initial work was done with PyAgrum.  The nature of what the Bayesian network is doing is *embodied* in the process used. 
 
 #### Monte Carlo Tree Search (MCTS)
-MCTS was experimented with but capturing the correct Utility function proved difficult.  It's concept did provide the insight that a focus on the Utility 
+MCTS was experimented with but capturing the correct Utility function proved difficult.  It's concept did provide the insight that a focus on the Utility
+
+## Final Design
+The final agent uses a tree data structure combined with a utiliy function that evaluated whether a letter or word assignment added value (utility) to the puzzle.  It did this by seeing if words were formed.  Trying words will certainly cause utility to increase. At the same time assigning an incorrect word can cause other words in the cryptogram to be incorrect and lower the utility.
 
 
 ## References:
